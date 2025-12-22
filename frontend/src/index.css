@@ -47,112 +47,85 @@
   @apply bg-white border-2 border-slate-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.05)] hover:shadow-[6px_6px_0px_0px_rgba(99,102,241,0.2)] transition-all duration-300 rounded-2xl;
 }
 
-/* --- CONSULTING-GRADE PDF EXPORT STYLES --- */
+/* --- EXCITING & PREMIUM PDF STYLES --- */
 @media print {
-  /* 1. Reset Page & Margins */
+  /* 1. Page Setup */
   @page {
     size: A4;
-    margin: 15mm 15mm 15mm 15mm; /* Standard 1-inch-ish margins */
+    margin: 10mm; /* Reduced margins for fuller look */
   }
 
-  /* 2. Global Print Resets */
+  /* 2. Force Background Colors & Graphics */
   body {
-    background: white !important;
-    color: black !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    font-size: 11pt; /* Optimal reading size */
-    line-height: 1.5;
+    background-color: white !important;
+    font-size: 10pt; /* Slightly smaller for density */
   }
 
-  /* 3. Hide Non-Print Elements */
-  nav, 
-  button, 
-  .print\:hidden,
-  .sticky-header, /* Hide sticky headers */
-  .no-print {
+  /* 3. Hide UI Elements */
+  nav, button, .print\:hidden, .sticky-header {
     display: none !important;
   }
 
-  /* 4. Formatting Containers */
-  .min-h-screen {
-    min-height: auto !important;
-    padding-bottom: 0 !important;
-  }
-
-  /* 5. Typography Upgrades for "Paper" feel */
+  /* 4. Typography & Branding */
   h1, h2, h3 {
-    font-family: 'Playfair Display', serif !important; /* Switch to Serif for headers */
-    color: #0f172a !important; /* Deep Navy */
-    page-break-after: avoid;
+    color: #0f172a !important;
+    font-family: 'Outfit', sans-serif !important; /* Keep modern font for brand consistency */
   }
   
-  h1 { font-size: 24pt !important; margin-bottom: 12pt !important; }
-  h2 { font-size: 18pt !important; margin-top: 20pt !important; margin-bottom: 10pt !important; border-bottom: 1px solid #e2e8f0; padding-bottom: 5pt; }
-  h3 { font-size: 14pt !important; margin-top: 15pt !important; margin-bottom: 8pt !important; }
-  p { margin-bottom: 10pt !important; color: #334155 !important; }
-
-  /* 6. Card & Component Styling */
-  .playful-card, .card {
+  /* 5. Card Styling - KEEP THE LOOK */
+  .playful-card {
     border: 1px solid #e2e8f0 !important;
     box-shadow: none !important;
-    border-radius: 4px !important; /* Sharper corners for pro look */
+    break-inside: avoid !important;
+    background-color: #fff !important; /* Ensure white bg */
+    border-radius: 12px !important;
     margin-bottom: 20px !important;
-    break-inside: avoid !important; /* PREVENT SPLIT CARDS */
-    background: white !important;
   }
 
-  /* 7. Grid Linearization */
-  .grid {
-    display: block !important; /* Stack everything */
-  }
-  .grid > * {
-    width: 100% !important;
-    margin-bottom: 20px !important;
+  /* Preserve header backgrounds in cards */
+  .bg-slate-900, .bg-indigo-900 {
+    color: white !important;
+    background-color: #0f172a !important; /* Force dark headers */
   }
   
-  /* Exception: Keep small internal grids (like 2-col stats) if they fit */
+  /* Preserve Badge Colors */
+  .bg-emerald-100 { background-color: #d1fae5 !important; color: #065f46 !important; }
+  .bg-rose-100 { background-color: #ffe4e6 !important; color: #881337 !important; }
+  .bg-amber-100 { background-color: #fef3c7 !important; color: #92400e !important; }
+  .bg-violet-100 { background-color: #ede9fe !important; color: #5b21b6 !important; }
+
+  /* 6. Layout Adjustments */
+  .grid {
+    display: grid !important; /* Keep grid layout if possible */
+  }
+  
+  /* Force specific layouts for print */
   .print\:grid-cols-2 {
-    display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 20px !important;
   }
-
-  /* 8. Table Optimization */
-  table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    font-size: 9pt !important;
-  }
-  th, td {
-    border: 1px solid #e2e8f0 !important;
-    padding: 8px !important;
-    text-align: left;
-  }
-  th {
-    background-color: #f8fafc !important;
-    font-weight: bold !important;
-  }
-  tr {
-    break-inside: avoid;
+  
+  .print\:block {
+    display: block !important;
   }
 
-  /* 9. Visual Tweaks */
-  .shadow-xl, .shadow-lg, .shadow-md {
-    box-shadow: none !important;
-  }
-  .bg-gradient-to-br {
-    background: #f8fafc !important; /* Remove gradients, use subtle gray */
-  }
-  .text-white {
-    color: #0f172a !important; /* Invert text on dark backgrounds */
+  /* 7. Chart Handling */
+  .recharts-wrapper {
+    margin: 0 auto !important;
   }
   
-  /* 10. Force Page Breaks */
-  .break-before-page {
+  /* 8. Page Breaks */
+  .print\:break-before {
     page-break-before: always !important;
   }
-  .break-after-page {
+  .print\:break-after {
     page-break-after: always !important;
+  }
+  
+  /* 9. Section Spacing */
+  section {
+    margin-bottom: 30px !important;
   }
 }
