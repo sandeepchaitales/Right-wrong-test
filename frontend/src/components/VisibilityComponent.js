@@ -102,36 +102,48 @@ export const VisibilityAnalysisCard = ({ analysis }) => {
                     </div>
                 )}
 
-                {/* Name Twins (Market Noise - Not rejection factors) */}
+                {/* Name Twins (Market Noise - False Positives filtered out) */}
                 {nameTwins.length > 0 && (
                     <div>
                         <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
-                            <Info className="w-3 h-3" /> Market Noise (Different Customers)
+                            <Info className="w-3 h-3" /> False Positives Filtered (Keyword Match Only)
                         </h4>
                         <div className="space-y-2">
                             {nameTwins.map((item, i) => (
                                 <div key={i} className="p-3 bg-slate-50 rounded-lg border border-slate-200">
                                     <div className="flex items-center justify-between mb-1">
                                         <span className="text-sm font-medium text-slate-700">{item.name}</span>
-                                        <Badge variant="secondary" className="bg-slate-200 text-slate-600 text-[10px]">LOW RISK</Badge>
+                                        <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 text-[10px]">NOT A CONFLICT</Badge>
                                     </div>
                                     <p className="text-xs text-slate-500 mb-1">{item.category}</p>
+                                    {item.their_product_intent && (
+                                        <p className="text-[10px] text-slate-400 mb-1">
+                                            <span className="font-medium">Their Intent:</span> {item.their_product_intent}
+                                        </p>
+                                    )}
                                     {item.their_customer_avatar && (
                                         <p className="text-[10px] text-slate-400">
                                             <span className="font-medium">Their Customers:</span> {item.their_customer_avatar}
                                         </p>
                                     )}
-                                    {item.customer_overlap && (
-                                        <Badge variant="outline" className="mt-1 text-[10px] text-slate-500 border-slate-300">
-                                            Customer Overlap: {item.customer_overlap}
-                                        </Badge>
-                                    )}
-                                    {item.reason && <p className="text-xs text-slate-400 mt-1 italic">{item.reason}</p>}
+                                    <div className="flex gap-2 mt-1">
+                                        {item.intent_match && (
+                                            <Badge variant="outline" className="text-[10px] text-slate-500 border-slate-300">
+                                                Intent: {item.intent_match}
+                                            </Badge>
+                                        )}
+                                        {item.customer_overlap && (
+                                            <Badge variant="outline" className="text-[10px] text-slate-500 border-slate-300">
+                                                Customers: {item.customer_overlap}
+                                            </Badge>
+                                        )}
+                                    </div>
+                                    {item.reason && <p className="text-xs text-emerald-600 mt-1 italic">{item.reason}</p>}
                                 </div>
                             ))}
                         </div>
-                        <p className="text-xs text-slate-400 mt-2 p-2 bg-slate-50 rounded border border-slate-100">
-                            ℹ️ Name twins in different industries are NOT rejection factors.
+                        <p className="text-xs text-emerald-600 mt-2 p-2 bg-emerald-50 rounded border border-emerald-100">
+                            ✓ These are keyword matches only - different intent/customers. NOT rejection factors.
                         </p>
                     </div>
                 )}
