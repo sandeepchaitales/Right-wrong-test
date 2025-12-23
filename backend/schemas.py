@@ -109,6 +109,8 @@ class BrandScore(BaseModel):
     trademark_matrix: TrademarkRiskMatrix
     trademark_classes: List[str] = Field(default=[], description="List of Nice Classes")
     domain_analysis: DomainAnalysis
+    multi_domain_availability: Optional[MultiDomainAvailability] = None
+    social_availability: Optional[SocialAvailability] = None
     visibility_analysis: Optional[VisibilityAnalysis] = None
     cultural_analysis: List[CountryAnalysis]
     competitor_analysis: Optional[CompetitorAnalysis] = None
