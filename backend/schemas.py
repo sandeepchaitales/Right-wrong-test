@@ -58,17 +58,20 @@ class SocialAvailability(BaseModel):
 class ConflictItem(BaseModel):
     name: str
     category: str
-    risk_level: str = Field(default="LOW", description="HIGH for direct competitors, LOW for name twins")
+    their_customer_avatar: Optional[str] = Field(default=None, description="Who uses this competitor/app")
+    customer_overlap: Optional[str] = Field(default=None, description="HIGH/NONE - overlap with user's customers")
+    risk_level: str = Field(default="LOW", description="HIGH for direct competitors with same customers, LOW for name twins")
     reason: Optional[str] = None
 
 class VisibilityAnalysis(BaseModel):
-    direct_competitors: List[ConflictItem] = Field(default=[], description="Same industry - HIGH risk, may trigger rejection")
-    name_twins: List[ConflictItem] = Field(default=[], description="Different industry - LOW risk, NOT rejection factors")
+    user_customer_avatar: Optional[str] = Field(default=None, description="Who buys the user's product")
+    direct_competitors: List[ConflictItem] = Field(default=[], description="Same industry + same customers - HIGH risk")
+    name_twins: List[ConflictItem] = Field(default=[], description="Different industry OR different customers - LOW risk, NOT rejection factors")
     google_presence: List[Any] 
     app_store_presence: List[Any]
     warning_triggered: bool
     warning_reason: Optional[str] = None
-    conflict_summary: Optional[str] = Field(default=None, description="Summary of direct competitors vs name twins")
+    conflict_summary: Optional[str] = Field(default=None, description="Summary of customer avatar analysis")
 
 class CountryAnalysis(BaseModel):
     country: str
