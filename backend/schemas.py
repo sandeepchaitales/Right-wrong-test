@@ -170,7 +170,7 @@ class BrandScore(BaseModel):
     cultural_analysis: List[CountryAnalysis]
     competitor_analysis: Optional[CompetitorAnalysis] = None
     final_assessment: Optional[FinalAssessment] = None
-    positioning_fit: str
+    positioning_fit: Optional[str] = Field(default="Positioning analysis pending")
 
 class BrandEvaluationRequest(BaseModel):
     brand_names: List[str]
