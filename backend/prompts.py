@@ -320,11 +320,26 @@ Return ONLY valid JSON.
       },
       
       "visibility_analysis": {
+          "user_customer_avatar": "Define who buys the User's product (e.g., 'Enterprise CTOs, B2B Marketers')",
           "direct_competitors": [
-              {"name": "Competitor App Name", "category": "Same/Similar Category", "risk_level": "HIGH", "reason": "Direct competitor in same vertical"}
+              {
+                  "name": "Competitor App Name", 
+                  "category": "Same/Similar Category", 
+                  "their_customer_avatar": "Who uses this competitor (e.g., 'Enterprise IT Teams')",
+                  "customer_overlap": "HIGH/NONE - Compare with user's customer avatar",
+                  "risk_level": "HIGH", 
+                  "reason": "FATAL: Same industry AND same customer avatar"
+              }
           ],
           "name_twins": [
-              {"name": "Unrelated App Name", "category": "Different Category (e.g., Photo Editor)", "risk_level": "LOW", "reason": "Different industry, no consumer confusion"}
+              {
+                  "name": "Unrelated App Name", 
+                  "category": "Different Category (e.g., Photo Editor)", 
+                  "their_customer_avatar": "Who uses this app (e.g., 'Teenagers, Casual users')",
+                  "customer_overlap": "NONE - Different customer base",
+                  "risk_level": "LOW", 
+                  "reason": "Different industry AND different customers - NOT a conflict"
+              }
           ],
           "google_presence": [],
           "app_store_presence": [],
