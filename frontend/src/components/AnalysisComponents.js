@@ -138,65 +138,126 @@ export const ScoreCard = ({ title, score, verdict, subtitle, className }) => {
 };
 
 // New Competitive Matrix Chart Component
-const CompetitiveMatrixChart = ({ competitors }) => {
-    // Helper to map string descriptors to coordinates
+const CompetitiveMatrixChart = ({ competitors, xAxisLabel, yAxisLabel, userBrandPosition }) => {
+    // Map competitor data to scatter plot coordinates
     const mapToCoordinates = (comp) => {
-        let x = 50; // default Mid
-        let y = 50; // default Fusion
+        // Use numeric coordinates if available, otherwise fall back to text parsing
+        let x = comp.x_coordinate;
+        let y = comp.y_coordinate;
 
-        const price = (comp.price_axis || "").toLowerCase();
-        if (price.includes("low") || price.includes("budget") || price.includes("mass")) x = 20;
-        else if (price.includes("high") || price.includes("premium") || price.includes("luxury")) x = 80;
-        else x = 50;
+        // Fallback: parse from text descriptions if coordinates not provided
+        if (x === undefined || x === null) {
+            const price = (comp.price_axis || comp.price_position || "").toLowerCase();
+            if (price.includes("low") || price.includes("budget") || price.includes("mass") || price.includes("free")) x = 20;
+            else if (price.includes("high") || price.includes("premium") || price.includes("luxury") || price.includes("enterprise")) x = 80;
+            else x = 50;
+        }
 
-        const mod = (comp.modernity_axis || "").toLowerCase();
-        if (mod.includes("traditional") || mod.includes("heritage") || mod.includes("classic")) y = 20;
-        else if (mod.includes("modern") || mod.includes("avant") || mod.includes("contemporary")) y = 80;
-        else y = 50;
+        if (y === undefined || y === null) {
+            const mod = (comp.modernity_axis || comp.category_position || "").toLowerCase();
+            if (mod.includes("traditional") || mod.includes("heritage") || mod.includes("classic") || mod.includes("basic") || mod.includes("simple")) y = 20;
+            else if (mod.includes("modern") || mod.includes("avant") || mod.includes("contemporary") || mod.includes("innovative") || mod.includes("advanced")) y = 80;
+            else y = 50;
+        }
 
-        // Add some jitter to prevent overlap
         return {
             name: comp.name,
-            x: x + (Math.random() * 6 - 3), 
-            y: y + (Math.random() * 6 - 3),
-            quadrant: comp.quadrant
+            x: Math.min(100, Math.max(0, x)),
+            y: Math.min(100, Math.max(0, y)),
+            quadrant: comp.quadrant,
+            isUserBrand: false
         };
     };
 
     const data = competitors.map(mapToCoordinates);
+    
+    // Add user brand position if available
+    if (userBrandPosition) {
+        data.push({
+            name: "YOUR BRAND",
+            x: userBrandPosition.x_coordinate || 50,
+            y: userBrandPosition.y_coordinate || 50,
+            quadrant: userBrandPosition.quadrant,
+            isUserBrand: true
+        });
+    }
+
+    // Parse axis labels for display
+    const xLabel = xAxisLabel || "Price: Low → High";
+    const yLabel = yAxisLabel || "Quality: Basic → Premium";
+    
+    // Extract short labels for quadrants
+    const xParts = xLabel.split("→").map(s => s.replace(/[^a-zA-Z\s]/g, '').trim());
+    const yParts = yLabel.split("→").map(s => s.replace(/[^a-zA-Z\s]/g, '').trim());
 
     return (
         <div className="h-[400px] w-full bg-slate-50/30 rounded-xl border border-slate-100 relative p-4">
             <ResponsiveContainer width="100%" height="100%">
-                <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" dataKey="x" name="Price" unit="" domain={[0, 100]} hide />
-                    <YAxis type="number" dataKey="y" name="Modernity" unit="" domain={[0, 100]} hide />
-                    <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                    <ReferenceLine x={50} stroke="#94a3b8" strokeDasharray="3 3" />
-                    <ReferenceLine y={50} stroke="#94a3b8" strokeDasharray="3 3" />
+                <ScatterChart margin={{ top: 30, right: 30, bottom: 30, left: 30 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis type="number" dataKey="x" name="X" domain={[0, 100]} tick={false} axisLine={{ stroke: '#94a3b8' }} />
+                    <YAxis type="number" dataKey="y" name="Y" domain={[0, 100]} tick={false} axisLine={{ stroke: '#94a3b8' }} />
+                    <Tooltip 
+                        cursor={{ strokeDasharray: '3 3' }} 
+                        content={({ payload }) => {
+                            if (payload && payload[0]) {
+                                const d = payload[0].payload;
+                                return (
+                                    <div className="bg-white p-2 rounded-lg shadow-lg border text-xs">
+                                        <p className="font-bold text-slate-800">{d.name}</p>
+                                        <p className="text-slate-500">{d.quadrant}</p>
+                                    </div>
+                                );
+                            }
+                            return null;
+                        }}
+                    />
+                    <ReferenceLine x={50} stroke="#cbd5e1" strokeDasharray="5 5" />
+                    <ReferenceLine y={50} stroke="#cbd5e1" strokeDasharray="5 5" />
                     <Scatter name="Competitors" data={data} fill="#8884d8">
                         {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={index % 2 === 0 ? "#7c3aed" : "#0ea5e9"} />
+                            <Cell 
+                                key={`cell-${index}`} 
+                                fill={entry.isUserBrand ? "#10b981" : (index % 3 === 0 ? "#7c3aed" : index % 3 === 1 ? "#0ea5e9" : "#f59e0b")} 
+                                r={entry.isUserBrand ? 12 : 8}
+                                stroke={entry.isUserBrand ? "#047857" : "none"}
+                                strokeWidth={entry.isUserBrand ? 3 : 0}
+                            />
                         ))}
-                        <LabelList dataKey="name" position="top" style={{ fontSize: 10, fontWeight: 'bold', fill: '#334155' }} />
+                        <LabelList dataKey="name" position="top" style={{ fontSize: 9, fontWeight: 'bold', fill: '#334155' }} />
                     </Scatter>
                 </ScatterChart>
             </ResponsiveContainer>
             
-            {/* Axis Labels */}
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                <Minus className="w-4 h-4" /> Price <ArrowUpRight className="w-4 h-4 rotate-45" />
+            {/* Dynamic Axis Labels */}
+            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                {xLabel}
             </div>
-            <div className="absolute left-2 top-1/2 -translate-y-1/2 -rotate-90 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                <Minus className="w-4 h-4" /> Modernity <ArrowUpRight className="w-4 h-4 rotate-45" />
+            <div className="absolute left-1 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                {yLabel}
             </div>
 
-            {/* Quadrant Labels */}
-            <div className="absolute top-4 right-4 text-[10px] font-bold text-slate-400 bg-white/80 px-2 rounded">AVANT-GARDE LUXURY</div>
-            <div className="absolute bottom-4 left-4 text-[10px] font-bold text-slate-400 bg-white/80 px-2 rounded">MASS TRADITIONAL</div>
-            <div className="absolute top-4 left-4 text-[10px] font-bold text-slate-400 bg-white/80 px-2 rounded">MASS MODERN</div>
-            <div className="absolute bottom-4 right-4 text-[10px] font-bold text-slate-400 bg-white/80 px-2 rounded">HERITAGE LUXURY</div>
+            {/* Dynamic Quadrant Labels */}
+            <div className="absolute top-2 right-2 text-[9px] font-bold text-violet-500 bg-violet-50 px-2 py-1 rounded">
+                {yParts[1] || 'Premium'} + {xParts[1] || 'High'}
+            </div>
+            <div className="absolute bottom-8 left-2 text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">
+                {yParts[0] || 'Basic'} + {xParts[0] || 'Low'}
+            </div>
+            <div className="absolute top-2 left-2 text-[9px] font-bold text-blue-500 bg-blue-50 px-2 py-1 rounded">
+                {yParts[1] || 'Premium'} + {xParts[0] || 'Low'}
+            </div>
+            <div className="absolute bottom-8 right-2 text-[9px] font-bold text-amber-500 bg-amber-50 px-2 py-1 rounded">
+                {yParts[0] || 'Basic'} + {xParts[1] || 'High'}
+            </div>
+            
+            {/* Legend */}
+            {userBrandPosition && (
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white px-3 py-1 rounded-full shadow-sm border">
+                    <span className="w-3 h-3 rounded-full bg-emerald-500 border-2 border-emerald-700"></span>
+                    <span className="text-[10px] font-bold text-emerald-700">YOUR BRAND</span>
+                </div>
+            )}
         </div>
     );
 };
