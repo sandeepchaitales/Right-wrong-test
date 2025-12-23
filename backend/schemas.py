@@ -67,6 +67,7 @@ class AlternativeNameSuggestion(BaseModel):
     rationale: str
 
 class AlternativeNames(BaseModel):
+    poison_words: Optional[List[str]] = Field(default=[], description="Words from original name that caused conflict")
     reasoning: str
     suggestions: List[AlternativeNameSuggestion]
 
