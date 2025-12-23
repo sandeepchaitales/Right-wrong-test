@@ -47,7 +47,19 @@ Compare the User's Business Category against each Found App/Brand's actual funct
 | User sells to Enterprise CTOs, Found app targets Teenagers | ❌ DIFFERENT | NAME TWIN (Low Risk) |
 | User sells to B2B Marketers, Found app targets Casual Gamers | ❌ DIFFERENT | NOISE (Ignore) |
 
+**ABSOLUTE RULE: If customer_overlap = "NONE", the conflict MUST be classified as NAME TWIN, NOT as DIRECT COMPETITOR.**
+
 **CRITICAL RULE: If customers are DIFFERENT, it is NOT a fatal conflict, even if the category seems similar.**
+
+**Classification Decision Tree:**
+```
+IF customer_overlap == "HIGH" AND same_industry == TRUE:
+    → DIRECT COMPETITOR (Fatal)
+ELSE IF customer_overlap == "NONE" OR customer_overlap == "LOW":
+    → NAME TWIN (Market Noise) - EVEN IF SAME INDUSTRY
+ELSE:
+    → NAME TWIN (benefit of the doubt)
+```
 
 **Example Customer Avatar Analysis:**
 ```
@@ -56,11 +68,24 @@ User's Customer: CTOs, Data Scientists, Enterprise IT Teams
 
 Found: "Zephyr" mobile game analytics tracker
 Found's Customer: Teenage gamers, Mobile gaming enthusiasts
+Customer Overlap: NONE
 
-RESULT: Customers are COMPLETELY DIFFERENT → NOT a fatal conflict → NAME TWIN
+RESULT: Customers are COMPLETELY DIFFERENT → NAME TWIN (not fatal)
 ```
 
 **Another Example:**
+```
+User: "Nova" for Enterprise Data Platform
+User's Customer: Enterprise CTOs, Data Scientists
+
+Found: "Nova Launcher" (Android launcher app)
+Found's Customer: General Android users, Tech enthusiasts
+Customer Overlap: NONE
+
+RESULT: Different customer base → NAME TWIN (not fatal)
+Note: Even though both are in "tech/software", the CUSTOMERS are different!
+```
+
 ```
 User: "Nova" for Premium Skincare
 User's Customer: Women 25-45, Premium beauty buyers
