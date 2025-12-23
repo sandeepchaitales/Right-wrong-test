@@ -7,6 +7,18 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Printer, ArrowLeft, CheckCircle2, XCircle, Star, Shield, Globe, Menu, LayoutDashboard } from "lucide-react";
 
+// Helper function to parse markdown bold (**text**) into JSX
+const parseMarkdownBold = (text) => {
+    if (!text) return text;
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+    return parts.map((part, index) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+            return <strong key={index} className="font-bold text-slate-800">{part.slice(2, -2)}</strong>;
+        }
+        return part;
+    });
+};
+
 const StickyHeader = ({ brandName, score, verdict, isVisible }) => (
     <div className={`sticky-header fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-slate-200 z-50 transition-all duration-300 transform ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
         <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
