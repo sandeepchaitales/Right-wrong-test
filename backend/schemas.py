@@ -47,6 +47,17 @@ class SocialHandleResult(BaseModel):
     handle: str
     status: str
     available: Optional[bool] = None
+    
+    @field_validator('available', mode='before')
+    @classmethod
+    def parse_available(cls, v):
+        if v is None or v == 'unknown' or v == 'Unknown' or v == '':
+            return None
+        if isinstance(v, bool):
+            return v
+        if isinstance(v, str):
+            return v.lower() in ('true', 'yes', '1', 'available')
+        return None
 
 class SocialAvailability(BaseModel):
     handle: str
