@@ -183,13 +183,14 @@ async def evaluate_brands(request: BrandEvaluationRequest):
             try:
                 data = json.loads(content)
             except json.JSONDecodeError:
-                # Apply cleaning only if direct parsing fails
-                logging.info("Direct JSON parsing failed, applying cleanup...")
+                # Apply cleaning and repair
+                logging.info("Direct JSON parsing failed, applying cleanup and repair...")
                 content = clean_json_string(content)
+                content = repair_json(content)
                 try:
                     data = json.loads(content)
                 except json.JSONDecodeError as je:
-                    # Log the problematic content for debugging (first 500 chars around error)
+                    # Log the problematic content for debugging (context around error)
                     error_pos = je.pos if hasattr(je, 'pos') else 0
                     start = max(0, error_pos - 100)
                     end = min(len(content), error_pos + 100)
