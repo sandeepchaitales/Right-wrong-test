@@ -29,19 +29,69 @@ Compare the User's Business Category against each Found App/Brand's actual funct
 | **NAME TWIN** (Low Risk) | Same name but COMPLETELY DIFFERENT vertical | User="B2B Analytics SaaS", Found="Zephyr Photo Art Maker" | → Move to "Market Noise" section, NOT a rejection factor |
 | **NOISE** (Ignore) | Low quality, spam, or clearly unrelated | Found="zephyr_gaming_2019 inactive account" | → Omit entirely |
 
+### 0.2 CUSTOMER AVATAR TEST (MANDATORY VALIDATION)
+**For EVERY potential conflict, you MUST perform the Customer Avatar Test before classifying as FATAL:**
+
+**Step 1: Define the User's Customer Avatar**
+- Who buys the User's product?
+- Examples: "Enterprise CTOs", "Startup Founders", "B2B Marketers", "Retail Shoppers", "Healthcare Professionals"
+
+**Step 2: Define the Found App/Brand's Customer Avatar**
+- Who uses the found app/brand?
+- Examples: "Teenagers", "Casual Gamers", "Social Media Influencers", "Homemakers", "Students"
+
+**Step 3: Compare Customer Avatars**
+| Scenario | Customer Match | Classification |
+|----------|----------------|----------------|
+| User sells to Enterprise CTOs, Found app targets Enterprise CTOs | ✅ SAME | FATAL CONFLICT |
+| User sells to Enterprise CTOs, Found app targets Teenagers | ❌ DIFFERENT | NAME TWIN (Low Risk) |
+| User sells to B2B Marketers, Found app targets Casual Gamers | ❌ DIFFERENT | NOISE (Ignore) |
+
+**CRITICAL RULE: If customers are DIFFERENT, it is NOT a fatal conflict, even if the category seems similar.**
+
+**Example Customer Avatar Analysis:**
+```
+User: "Zephyr" for Enterprise Data Analytics
+User's Customer: CTOs, Data Scientists, Enterprise IT Teams
+
+Found: "Zephyr" mobile game analytics tracker
+Found's Customer: Teenage gamers, Mobile gaming enthusiasts
+
+RESULT: Customers are COMPLETELY DIFFERENT → NOT a fatal conflict → NAME TWIN
+```
+
+**Another Example:**
+```
+User: "Nova" for Premium Skincare
+User's Customer: Women 25-45, Premium beauty buyers
+
+Found: "Nova" same-day grocery delivery
+Found's Customer: Urban families, Working professionals
+
+RESULT: Different customer base → NOT a fatal conflict → NAME TWIN
+```
+
+**ONLY mark as FATAL CONFLICT if:**
+1. Same industry/vertical AND
+2. Same or highly overlapping customer avatar AND
+3. Active trademark or operating business
+
 **CRITICAL RULES:**
 1. NEVER reject a name based on "Name Twins" in different industries
-2. A photo editing app is NOT a conflict for a fintech brand
-3. A gaming app is NOT a conflict for a wellness brand
-4. Only "Direct Competitors" count as Fatal Conflicts
-5. When in doubt about industry overlap, classify as "Name Twin" (benefit of the doubt)
+2. NEVER reject if customer avatars are different (even if categories seem similar)
+3. A photo editing app is NOT a conflict for a fintech brand (different customers)
+4. A gaming app is NOT a conflict for a wellness brand (different customers)
+5. Only "Direct Competitors" with SAME CUSTOMERS count as Fatal Conflicts
+6. When in doubt about customer overlap, classify as "Name Twin" (benefit of the doubt)
 
-**Example Analysis:**
+**Example Analysis with Customer Avatar Test:**
 - User Category: "Enterprise HR Software"
+- User's Customer Avatar: "HR Directors, CHROs, Enterprise People Teams"
 - Found Apps: 
-  - "Zephyr HR Suite" → DIRECT COMPETITOR (same industry) → Fatal Conflict
-  - "Zephyr Weather App" → NAME TWIN (different industry) → Market Noise
-  - "zephyr_wallpapers_hd" → NOISE → Omit
+  - "Zephyr HR Suite" (Customer: HR Directors) → SAME CUSTOMER → FATAL CONFLICT
+  - "Zephyr Weather App" (Customer: General consumers) → DIFFERENT CUSTOMER → Market Noise
+  - "Zephyr Kids Learning" (Customer: Parents, Children) → DIFFERENT CUSTOMER → Noise
+  - "zephyr_wallpapers_hd" (Customer: Teenagers) → DIFFERENT CUSTOMER → Omit
 
 **DOMAIN AVAILABILITY RULES (IMPORTANT):**
 - .com domain TAKEN = MINOR RISK ONLY (3/10 severity, -1 point max)
@@ -54,9 +104,9 @@ Compare the User's Business Category against each Found App/Brand's actual funct
 - "rightname.com" is parked (no site, no business, no TM) = GO verdict with .io recommendation
 - "rightname.com" has active e-commerce business + TM in same category = REJECT
 
-If you find an **EXISTING, ACTIVE BRAND** with the **EXACT SAME NAME** in the **SAME OR ADJACENT CATEGORY** (verified as DIRECT COMPETITOR) with trademark/business activity:
+If you find an **EXISTING, ACTIVE BRAND** with the **EXACT SAME NAME** in the **SAME OR ADJACENT CATEGORY** (verified as DIRECT COMPETITOR with SAME CUSTOMER AVATAR) with trademark/business activity:
 1. The **Verdict** MUST be **"NO-GO"** or **"REJECT"**. No exceptions.
-2. The **Executive Summary** MUST start with: "FATAL CONFLICT DETECTED: [Name] is already an active brand in [Category] (Evidence: [Competitor details, TM registration, business activity])."
+2. The **Executive Summary** MUST start with: "FATAL CONFLICT DETECTED: [Name] is already an active brand in [Category] targeting the same customer segment (Evidence: [Competitor details, TM registration, business activity])."
 3. The **Suitability Score** MUST be penalized heavily (below 40/100).
 4. Do NOT gloss over this. A REAL conflict (TM + business + same industry) makes the name unusable.
 
