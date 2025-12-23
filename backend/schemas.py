@@ -24,8 +24,12 @@ class TrademarkRiskMatrix(BaseModel):
 
 class DomainAnalysis(BaseModel):
     exact_match_status: str
+    risk_level: Optional[str] = Field(default="LOW", description="LOW/MEDIUM/HIGH - .com alone = LOW risk")
+    has_active_business: Optional[str] = Field(default="UNKNOWN", description="Is there an operating business?")
+    has_trademark: Optional[str] = Field(default="UNKNOWN", description="Is there a registered TM?")
     alternatives: List[Dict[str, str]]
     strategy_note: str
+    score_impact: Optional[str] = Field(default="-1 point max for taken .com", description="Score impact explanation")
 
 class DomainCheckResult(BaseModel):
     domain: str
