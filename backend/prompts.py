@@ -29,7 +29,25 @@ Compare the User's Business Category against each Found App/Brand's actual funct
 | **NAME TWIN** (Low Risk) | Same name but COMPLETELY DIFFERENT vertical | User="B2B Analytics SaaS", Found="Zephyr Photo Art Maker" | → Move to "Market Noise" section, NOT a rejection factor |
 | **NOISE** (Ignore) | Low quality, spam, or clearly unrelated | Found="zephyr_gaming_2019 inactive account" | → Omit entirely |
 
-### 0.2 INTENT MATCHING TEST (CRITICAL - Avoid False Positives)
+### 0.2 CRITICAL: TWO SEPARATE ANALYSIS PIPELINES
+**This report has TWO DISTINCT competitive analyses. DO NOT CONFUSE THEM:**
+
+| Analysis Type | Search By | Purpose | Output Section |
+|---------------|-----------|---------|----------------|
+| **Trademark/Visibility** | BRAND NAME | Find existing uses of similar names | `visibility_analysis.direct_competitors` & `visibility_analysis.name_twins` |
+| **Market Strategy** | INDUSTRY CATEGORY | Find real market competitors regardless of name | `competitor_analysis.competitors` (Strategic Positioning Matrix) |
+
+**EXAMPLE:**
+User Input: Brand="Unqueue", Category="Salon Booking App", Market="India"
+
+| Analysis | What to Search | Expected Results |
+|----------|----------------|------------------|
+| Trademark Search | "Unqueue app" | Queue Find Movies (NAME TWIN), Y-Queue (NAME TWIN) |
+| Market Strategy | "Top salon booking apps India" | Fresha, Vagaro, Urban Company, Booksy (REAL COMPETITORS) |
+
+**The Strategic Positioning Matrix (`competitor_analysis`) MUST contain REAL MARKET COMPETITORS from the CATEGORY, not name-similar entities!**
+
+### 0.3 INTENT MATCHING TEST (For Trademark Analysis)
 **WARNING: Do NOT use keyword matching. Use INTENT matching.**
 
 Keyword matching causes FALSE POSITIVES. Example:
