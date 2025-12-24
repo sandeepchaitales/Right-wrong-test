@@ -147,8 +147,8 @@ class AlternativeNameSuggestion(BaseModel):
 
 class AlternativeNames(BaseModel):
     poison_words: Optional[List[str]] = Field(default=[], description="Words from original name that caused conflict")
-    reasoning: str
-    suggestions: List[AlternativeNameSuggestion]
+    reasoning: Optional[str] = Field(default="Alternative names suggested based on analysis")
+    suggestions: List[AlternativeNameSuggestion] = Field(default=[])
 
 class BrandScore(BaseModel):
     brand_name: str
