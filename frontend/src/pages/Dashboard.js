@@ -210,27 +210,33 @@ const StrengthsRisksCard = ({ pros, cons }) => (
 // ============ COMPETITOR CARD ============
 const CompetitorCard = ({ competitor }) => {
     const getRiskColor = (risk) => {
-        if (risk === 'LOW' || risk === 'Low') return 'bg-emerald-100 text-emerald-700';
-        if (risk === 'MEDIUM' || risk === 'Medium') return 'bg-amber-100 text-amber-700';
+        const riskLower = (risk || '').toLowerCase();
+        if (riskLower === 'low' || riskLower === 'none') return 'bg-emerald-100 text-emerald-700';
+        if (riskLower === 'medium' || riskLower === 'moderate') return 'bg-amber-100 text-amber-700';
         return 'bg-red-100 text-red-700';
     };
+    
+    // Extract position info
+    const position = competitor.quadrant || competitor.price_position || competitor.category_position;
+    const overlap = competitor.similarity || competitor.x_coordinate;
     
     return (
         <PrintCard>
             <div className="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-lg">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center text-lg">
                         🏢
                     </div>
                     <div>
                         <h4 className="font-bold text-slate-800">{competitor.name}</h4>
                         <p className="text-xs text-slate-500">
-                            {competitor.category || 'Similar Category'} • {competitor.similarity || 'N/A'}% overlap
+                            {position && <span>{position}</span>}
+                            {overlap && <span> • {typeof overlap === 'number' ? `${overlap}%` : overlap} position</span>}
                         </p>
                     </div>
                 </div>
-                <Badge className={`${getRiskColor(competitor.conflict_level || competitor.risk || 'LOW')} font-bold`}>
-                    {competitor.conflict_level || competitor.risk || 'Low'} Risk
+                <Badge className={`${getRiskColor(competitor.conflict_level || competitor.risk)} font-bold`}>
+                    {competitor.conflict_level || competitor.risk || competitor.quadrant || 'Competitor'}
                 </Badge>
             </div>
         </PrintCard>
