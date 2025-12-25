@@ -65,12 +65,44 @@ KNOWN_BRANDS = {
     ]
 }
 
-# Famous global brands to always check against
+# Famous global brands to always check against (MUST MATCH server.py FAMOUS_BRANDS)
 GLOBAL_FAMOUS_BRANDS = [
-    "Tata", "Apple", "Google", "Amazon", "Microsoft", "Meta", "Facebook", "Netflix",
-    "Nike", "Adidas", "Coca-Cola", "Pepsi", "McDonald's", "Starbucks", "Disney",
-    "Toyota", "Samsung", "Sony", "Intel", "IBM", "Oracle", "Adobe", "Visa",
-    "Mastercard", "PayPal", "Uber", "Airbnb", "Spotify", "Tesla", "SpaceX"
+    # Fortune 500 / Major Retailers
+    "Costco", "Walmart", "Target", "Kroger", "Walgreens", "CVS", "Home Depot", "Lowes",
+    "Best Buy", "Macys", "Nordstrom", "Kohls", "JCPenney", "Sears", "IKEA", "Aldi", "Lidl",
+    "Whole Foods", "Trader Joes", "Safeway", "Publix", "Wegmans",
+    # Tech Giants
+    "Apple", "Google", "Microsoft", "Amazon", "Meta", "Facebook", "Instagram", "WhatsApp",
+    "Netflix", "Spotify", "Uber", "Lyft", "Airbnb", "Twitter", "TikTok", "Snapchat",
+    "LinkedIn", "Pinterest", "Reddit", "Discord", "Zoom", "Slack", "Dropbox", "Salesforce",
+    "Oracle", "SAP", "Adobe", "Nvidia", "Intel", "AMD", "Qualcomm", "Cisco", "IBM", "HP",
+    "Dell", "Lenovo", "Samsung", "Sony", "LG", "Panasonic", "Toshiba", "Huawei", "Xiaomi",
+    # Automotive
+    "Tesla", "Ford", "GM", "Chevrolet", "Toyota", "Honda", "BMW", "Mercedes", "Audi",
+    "Volkswagen", "Porsche", "Ferrari", "Lamborghini", "Bentley", "Rolls Royce", "Jaguar",
+    # Food & Beverage
+    "Coca Cola", "Pepsi", "McDonalds", "Burger King", "Wendys", "Starbucks", "Dunkin",
+    "Subway", "Dominos", "Pizza Hut", "KFC", "Taco Bell", "Chipotle", "Panera",
+    "Nestle", "Kraft", "General Mills", "Kelloggs", "PepsiCo", "Mondelez",
+    # Fashion & Luxury
+    "Nike", "Adidas", "Puma", "Reebok", "Under Armour", "Lululemon", "Gap", "Old Navy",
+    "Zara", "H&M", "Uniqlo", "Forever 21", "ASOS", "Shein", "Louis Vuitton", "Gucci",
+    "Prada", "Chanel", "Hermes", "Dior", "Versace", "Armani", "Burberry", "Coach",
+    "Michael Kors", "Ralph Lauren", "Tommy Hilfiger", "Calvin Klein", "Levis",
+    # Finance
+    "Visa", "Mastercard", "American Express", "PayPal", "Stripe", "Square", "Venmo",
+    "Chase", "Bank of America", "Wells Fargo", "Citibank", "Goldman Sachs", "Morgan Stanley",
+    # Beauty & Personal Care
+    "Loreal", "Maybelline", "MAC", "Sephora", "Ulta", "Estee Lauder", "Clinique",
+    "Neutrogena", "Dove", "Pantene", "Head Shoulders", "Gillette", "Olay",
+    # Entertainment
+    "Disney", "Warner Bros", "Universal", "Paramount", "Sony Pictures", "MGM",
+    "HBO", "Showtime", "Hulu", "Paramount Plus", "Peacock", "ESPN", "CNN", "Fox",
+    # Others
+    "FedEx", "UPS", "USPS", "DHL", "Amazon Prime", "eBay", "Etsy", "Shopify",
+    "Alibaba", "AliExpress", "Wish", "Wayfair", "Overstock", "Chewy", "Petco", "PetSmart",
+    # Indian Major Brands
+    "Tata", "Reliance", "Adani", "Birla", "Mahindra", "Godrej", "Bajaj", "Infosys", "Wipro"
 ]
 
 
