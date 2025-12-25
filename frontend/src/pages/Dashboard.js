@@ -9,7 +9,7 @@ import {
     Lock, Sparkles, TrendingUp, AlertTriangle, Users, Zap, 
     BarChart3, Target, Award, FileText, Calendar, Lightbulb,
     Rocket, MessageSquare, Scale, Building2, Hash, AtSign,
-    CheckCircle, XOctagon, HelpCircle, Map, Briefcase, UserCheck
+    CheckCircle, XOctagon, HelpCircle, Map, Briefcase, UserCheck, AlertCircle
 } from "lucide-react";
 
 // RIGHTNAME Logo URL
