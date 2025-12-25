@@ -126,10 +126,24 @@ class Competitor(BaseModel):
     modernity_axis: Optional[str] = Field(default=None, description="Legacy: Y-Axis description")
 
 class UserBrandPosition(BaseModel):
-    x_coordinate: float = Field(default=50, description="X-axis position 0-100")
-    y_coordinate: float = Field(default=50, description="Y-axis position 0-100")
-    quadrant: str
+    x_coordinate: Optional[float] = Field(default=50, description="X-axis position 0-100")
+    y_coordinate: Optional[float] = Field(default=50, description="Y-axis position 0-100")
+    quadrant: Optional[str] = Field(default="Center")
     rationale: Optional[str] = None
+    
+    @field_validator('x_coordinate', 'y_coordinate', mode='before')
+    @classmethod
+    def parse_coordinate(cls, v):
+        if v is None or v == 'N/A' or v == 'n/a' or v == '':
+            return 50.0  # Default to center
+        if isinstance(v, (int, float)):
+            return float(v)
+        if isinstance(v, str):
+            try:
+                return float(v)
+            except ValueError:
+                return 50.0
+        return 50.0
 
 class CompetitorAnalysis(BaseModel):
     x_axis_label: Optional[str] = Field(default="Price: Low → High", description="X-axis label")
