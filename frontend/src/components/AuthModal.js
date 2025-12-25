@@ -105,6 +105,9 @@ const AuthModal = () => {
                 </CardHeader>
 
                 <CardContent className="p-6">
+                    {/* Report Preview */}
+                    <ReportPreviewCompact />
+                    
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                         <TabsList className="grid w-full grid-cols-2 mb-6 bg-slate-100 p-1 rounded-xl">
                             <TabsTrigger 
