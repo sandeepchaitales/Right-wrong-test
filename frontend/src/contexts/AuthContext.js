@@ -2,6 +2,18 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
+// Get API URL based on environment
+const getApiUrl = () => {
+    // In production (deployed), use relative URL
+    if (process.env.NODE_ENV === 'production') {
+        return '/api';
+    }
+    // In development, use the environment variable
+    return `${process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001'}/api`;
+};
+
+const API_URL = getApiUrl();
+
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
