@@ -9,56 +9,56 @@
       "test": "API Health Check",
       "success": true,
       "details": "Status: 200, Response: {\"message\":\"RightName API is running\"}",
-      "timestamp": "2025-12-25T09:50:22.359014"
+      "timestamp": "2025-12-25T09:52:35.380227"
     },
     {
       "test": "Evaluate Endpoint - Structure",
       "success": true,
-      "details": "All required fields present, Astra NameScore: 45.0",
-      "timestamp": "2025-12-25T09:51:17.502083"
+      "details": "All required fields present, Astra NameScore: 72.0",
+      "timestamp": "2025-12-25T09:53:46.151211"
     },
     {
       "test": "Auth Register",
       "success": true,
-      "details": "User registered: user_5aa38225daec",
-      "timestamp": "2025-12-25T09:51:17.797013"
+      "details": "User registered: user_bdcf8664c1e0",
+      "timestamp": "2025-12-25T09:53:46.481219"
     },
     {
       "test": "Auth Login Email",
       "success": true,
-      "details": "User logged in: user_5aa38225daec",
-      "timestamp": "2025-12-25T09:51:18.066441"
+      "details": "User logged in: user_bdcf8664c1e0",
+      "timestamp": "2025-12-25T09:53:46.748410"
     },
     {
       "test": "Auth Me",
       "success": true,
-      "details": "Current user: test_51e674ea@example.com",
-      "timestamp": "2025-12-25T09:51:18.108325"
+      "details": "Current user: test_223c4c6e@example.com",
+      "timestamp": "2025-12-25T09:53:46.787678"
     },
     {
       "test": "Generate Report with Auth",
       "success": false,
       "details": "No report_id in response",
-      "timestamp": "2025-12-25T09:52:06.871974"
+      "timestamp": "2025-12-25T09:54:39.687651"
     },
     {
       "test": "Get Report Authenticated",
       "success": false,
       "details": "No report_id available",
-      "timestamp": "2025-12-25T09:52:06.872004"
+      "timestamp": "2025-12-25T09:54:39.687681"
     },
     {
       "test": "Get Report Unauthenticated",
       "success": false,
       "details": "No report_id available",
-      "timestamp": "2025-12-25T09:52:06.872010"
+      "timestamp": "2025-12-25T09:54:39.687688"
     },
     {
       "test": "Auth Logout",
       "success": true,
       "details": "Logout successful: Logged out successfully",
-      "timestamp": "2025-12-25T09:52:06.952189"
+      "timestamp": "2025-12-25T09:54:39.762899"
     }
   ],
-  "timestamp": "2025-12-25T09:52:06.952359"
+  "timestamp": "2025-12-25T09:54:39.763054"
 }
