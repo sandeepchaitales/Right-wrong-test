@@ -751,40 +751,48 @@ const MarketIntelligenceSection = ({ domainAnalysis, visibilityAnalysis, cultura
 };
 
 // ============ COMPETITIVE LANDSCAPE SECTION ============
-const CompetitiveLandscapeSection = ({ competitorAnalysis }) => {
-    if (!competitorAnalysis) return null;
+const CompetitiveLandscapeSection = ({ competitorAnalysis, countryCompetitorAnalysis }) => {
+    if (!competitorAnalysis && (!countryCompetitorAnalysis || countryCompetitorAnalysis.length === 0)) return null;
     
-    const competitors = competitorAnalysis.competitors || competitorAnalysis.true_market_competitors || [];
+    const competitors = competitorAnalysis?.competitors || competitorAnalysis?.true_market_competitors || [];
     
-    return (
-        <div className="space-y-4">
-            {/* Positioning Matrix Visual */}
-            <PrintCard>
+    // Country colors for different markets
+    const countryColors = [
+        { bg: 'from-blue-500 to-indigo-500', light: 'bg-blue-50 border-blue-200', text: 'text-blue-700' },
+        { bg: 'from-emerald-500 to-teal-500', light: 'bg-emerald-50 border-emerald-200', text: 'text-emerald-700' },
+        { bg: 'from-amber-500 to-orange-500', light: 'bg-amber-50 border-amber-200', text: 'text-amber-700' },
+        { bg: 'from-rose-500 to-pink-500', light: 'bg-rose-50 border-rose-200', text: 'text-rose-700' },
+    ];
+    
+    // Render a single positioning matrix
+    const renderMatrix = (analysis, title, colorScheme, showFlag = false) => {
+        const comps = analysis.competitors || [];
+        return (
+            <PrintCard key={title}>
                 <div className="bg-white rounded-2xl p-6 border border-slate-200">
-                    <SubSectionHeader icon={BarChart3} title="Strategic Positioning Matrix" />
+                    <div className="flex items-center justify-between mb-4">
+                        <SubSectionHeader icon={BarChart3} title={title} />
+                        {showFlag && analysis.country_flag && (
+                            <span className="text-3xl">{analysis.country_flag}</span>
+                        )}
+                    </div>
                     
                     {/* Axis Labels */}
                     <div className="text-center mb-4">
                         <p className="text-xs text-slate-500">
-                            X: {competitorAnalysis.x_axis_label || 'Price: Budget → Luxury'} | Y: {competitorAnalysis.y_axis_label || 'Style: Classic → Avant-Garde'}
+                            X: {analysis.x_axis_label || 'Price: Budget → Luxury'} | Y: {analysis.y_axis_label || 'Style: Classic → Avant-Garde'}
                         </p>
                     </div>
                     
                     {/* Visual Matrix */}
-                    <div className="relative bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-xl p-4 h-80">
+                    <div className="relative bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-xl p-4 h-64">
                         {/* Grid lines */}
                         <div className="absolute inset-4 border-l border-b border-slate-300"></div>
                         <div className="absolute left-1/2 top-4 bottom-4 border-l border-dashed border-slate-200"></div>
                         <div className="absolute left-4 right-4 top-1/2 border-t border-dashed border-slate-200"></div>
                         
-                        {/* Quadrant Labels */}
-                        <div className="absolute top-6 left-6 text-xs text-slate-400">Budget + Avant-Garde</div>
-                        <div className="absolute top-6 right-6 text-xs text-slate-400 text-right">Luxury + Avant-Garde</div>
-                        <div className="absolute bottom-6 left-6 text-xs text-slate-400">Budget + Classic</div>
-                        <div className="absolute bottom-6 right-6 text-xs text-slate-400 text-right">Luxury + Classic</div>
-                        
                         {/* Plot competitors */}
-                        {competitors.slice(0, 6).map((comp, i) => {
+                        {comps.slice(0, 5).map((comp, i) => {
                             const x = (comp.x_coordinate || 50) / 100 * 80 + 10;
                             const y = 100 - ((comp.y_coordinate || 50) / 100 * 80 + 10);
                             return (
@@ -793,7 +801,7 @@ const CompetitiveLandscapeSection = ({ competitorAnalysis }) => {
                                     className="absolute transform -translate-x-1/2 -translate-y-1/2 group"
                                     style={{ left: `${x}%`, top: `${y}%` }}
                                 >
-                                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
+                                    <div className={`w-7 h-7 bg-gradient-to-r ${colorScheme.bg} rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg`}>
                                         {i + 1}
                                     </div>
                                     <div className="hidden group-hover:block absolute top-full left-1/2 transform -translate-x-1/2 mt-1 px-2 py-1 bg-slate-800 text-white text-xs rounded whitespace-nowrap z-10">
@@ -804,15 +812,15 @@ const CompetitiveLandscapeSection = ({ competitorAnalysis }) => {
                         })}
                         
                         {/* User brand position */}
-                        {competitorAnalysis.user_brand_position && (
+                        {analysis.user_brand_position && (
                             <div
                                 className="absolute transform -translate-x-1/2 -translate-y-1/2"
                                 style={{
-                                    left: `${(competitorAnalysis.user_brand_position.x || 70) / 100 * 80 + 10}%`,
-                                    top: `${100 - ((competitorAnalysis.user_brand_position.y || 70) / 100 * 80 + 10)}%`
+                                    left: `${(analysis.user_brand_position.x_coordinate || analysis.user_brand_position.x || 70) / 100 * 80 + 10}%`,
+                                    top: `${100 - ((analysis.user_brand_position.y_coordinate || analysis.user_brand_position.y || 70) / 100 * 80 + 10)}%`
                                 }}
                             >
-                                <div className="w-10 h-10 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white">
+                                <div className="w-9 h-9 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white">
                                     YOU
                                 </div>
                             </div>
@@ -820,49 +828,180 @@ const CompetitiveLandscapeSection = ({ competitorAnalysis }) => {
                     </div>
                     
                     {/* Legend */}
-                    <div className="mt-4 flex flex-wrap gap-3">
-                        {competitors.slice(0, 6).map((comp, i) => (
-                            <div key={i} className="flex items-center gap-2 text-xs">
-                                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs">{i + 1}</div>
-                                <span className="text-slate-600">{comp.name}</span>
-                                <Badge variant="outline" className="text-xs">{comp.quadrant || comp.price_position}</Badge>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                        {comps.slice(0, 5).map((comp, i) => (
+                            <div key={i} className="flex items-center gap-1 text-xs">
+                                <div className={`w-4 h-4 bg-gradient-to-r ${colorScheme.bg} rounded-full flex items-center justify-center text-white text-xs`}>{i + 1}</div>
+                                <span className="text-slate-600 text-xs">{comp.name}</span>
                             </div>
                         ))}
                     </div>
-                </div>
-            </PrintCard>
-            
-            {/* White Space & Strategic Advantage */}
-            <PrintCard>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {competitorAnalysis.white_space_analysis && (
-                        <div className="bg-emerald-50 rounded-xl p-5 border border-emerald-200">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Lightbulb className="w-5 h-5 text-emerald-600" />
-                                <h4 className="font-bold text-emerald-700">White Space Analysis</h4>
+                    
+                    {/* Market Insights */}
+                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {analysis.white_space_analysis && (
+                            <div className={`p-3 rounded-lg border ${colorScheme.light}`}>
+                                <p className={`text-xs font-bold ${colorScheme.text} mb-1`}>White Space</p>
+                                <p className="text-xs text-slate-600">{analysis.white_space_analysis}</p>
                             </div>
-                            <p className="text-sm text-slate-700">{competitorAnalysis.white_space_analysis}</p>
+                        )}
+                        {analysis.strategic_advantage && (
+                            <div className={`p-3 rounded-lg border ${colorScheme.light}`}>
+                                <p className={`text-xs font-bold ${colorScheme.text} mb-1`}>Strategic Advantage</p>
+                                <p className="text-xs text-slate-600">{analysis.strategic_advantage}</p>
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Market Entry Recommendation (for country-specific) */}
+                    {analysis.market_entry_recommendation && (
+                        <div className="mt-3 p-3 bg-violet-50 rounded-lg border border-violet-200">
+                            <p className="text-xs font-bold text-violet-700 mb-1">Market Entry Recommendation</p>
+                            <p className="text-xs text-slate-600">{analysis.market_entry_recommendation}</p>
                         </div>
                     )}
-                    {competitorAnalysis.strategic_advantage && (
-                        <div className="bg-violet-50 rounded-xl p-5 border border-violet-200">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Target className="w-5 h-5 text-violet-600" />
-                                <h4 className="font-bold text-violet-700">Strategic Advantage</h4>
-                            </div>
-                            <p className="text-sm text-slate-700">{competitorAnalysis.strategic_advantage}</p>
-                        </div>
-                    )}
                 </div>
             </PrintCard>
+        );
+    };
+    
+    return (
+        <div className="space-y-4">
+            {/* Global/Overall Strategic Positioning Matrix */}
+            {competitorAnalysis && competitors.length > 0 && (
+                <>
+                    <PrintCard>
+                        <div className="bg-white rounded-2xl p-6 border border-slate-200">
+                            <SubSectionHeader icon={BarChart3} title="Strategic Positioning Matrix (Global Overview)" />
+                            
+                            {/* Axis Labels */}
+                            <div className="text-center mb-4">
+                                <p className="text-xs text-slate-500">
+                                    X: {competitorAnalysis.x_axis_label || 'Price: Budget → Luxury'} | Y: {competitorAnalysis.y_axis_label || 'Style: Classic → Avant-Garde'}
+                                </p>
+                            </div>
+                            
+                            {/* Visual Matrix */}
+                            <div className="relative bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-xl p-4 h-80">
+                                {/* Grid lines */}
+                                <div className="absolute inset-4 border-l border-b border-slate-300"></div>
+                                <div className="absolute left-1/2 top-4 bottom-4 border-l border-dashed border-slate-200"></div>
+                                <div className="absolute left-4 right-4 top-1/2 border-t border-dashed border-slate-200"></div>
+                                
+                                {/* Quadrant Labels */}
+                                <div className="absolute top-6 left-6 text-xs text-slate-400">Budget + Avant-Garde</div>
+                                <div className="absolute top-6 right-6 text-xs text-slate-400 text-right">Luxury + Avant-Garde</div>
+                                <div className="absolute bottom-6 left-6 text-xs text-slate-400">Budget + Classic</div>
+                                <div className="absolute bottom-6 right-6 text-xs text-slate-400 text-right">Luxury + Classic</div>
+                                
+                                {/* Plot competitors */}
+                                {competitors.slice(0, 6).map((comp, i) => {
+                                    const x = (comp.x_coordinate || 50) / 100 * 80 + 10;
+                                    const y = 100 - ((comp.y_coordinate || 50) / 100 * 80 + 10);
+                                    return (
+                                        <div
+                                            key={i}
+                                            className="absolute transform -translate-x-1/2 -translate-y-1/2 group"
+                                            style={{ left: `${x}%`, top: `${y}%` }}
+                                        >
+                                            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
+                                                {i + 1}
+                                            </div>
+                                            <div className="hidden group-hover:block absolute top-full left-1/2 transform -translate-x-1/2 mt-1 px-2 py-1 bg-slate-800 text-white text-xs rounded whitespace-nowrap z-10">
+                                                {comp.name}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                                
+                                {/* User brand position */}
+                                {competitorAnalysis.user_brand_position && (
+                                    <div
+                                        className="absolute transform -translate-x-1/2 -translate-y-1/2"
+                                        style={{
+                                            left: `${(competitorAnalysis.user_brand_position.x || competitorAnalysis.user_brand_position.x_coordinate || 70) / 100 * 80 + 10}%`,
+                                            top: `${100 - ((competitorAnalysis.user_brand_position.y || competitorAnalysis.user_brand_position.y_coordinate || 70) / 100 * 80 + 10)}%`
+                                        }}
+                                    >
+                                        <div className="w-10 h-10 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white">
+                                            YOU
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {/* Legend */}
+                            <div className="mt-4 flex flex-wrap gap-3">
+                                {competitors.slice(0, 6).map((comp, i) => (
+                                    <div key={i} className="flex items-center gap-2 text-xs">
+                                        <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs">{i + 1}</div>
+                                        <span className="text-slate-600">{comp.name}</span>
+                                        <Badge variant="outline" className="text-xs">{comp.quadrant || comp.price_position}</Badge>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </PrintCard>
+                    
+                    {/* White Space & Strategic Advantage for Global */}
+                    <PrintCard>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {competitorAnalysis.white_space_analysis && (
+                                <div className="bg-emerald-50 rounded-xl p-5 border border-emerald-200">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <Lightbulb className="w-5 h-5 text-emerald-600" />
+                                        <h4 className="font-bold text-emerald-700">White Space Analysis</h4>
+                                    </div>
+                                    <p className="text-sm text-slate-700">{competitorAnalysis.white_space_analysis}</p>
+                                </div>
+                            )}
+                            {competitorAnalysis.strategic_advantage && (
+                                <div className="bg-violet-50 rounded-xl p-5 border border-violet-200">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <Target className="w-5 h-5 text-violet-600" />
+                                        <h4 className="font-bold text-violet-700">Strategic Advantage</h4>
+                                    </div>
+                                    <p className="text-sm text-slate-700">{competitorAnalysis.strategic_advantage}</p>
+                                </div>
+                            )}
+                        </div>
+                    </PrintCard>
+                </>
+            )}
             
-            {/* Recommended Pricing */}
-            {competitorAnalysis.suggested_pricing && (
+            {/* Country-Specific Positioning Matrices (up to 4) */}
+            {countryCompetitorAnalysis && countryCompetitorAnalysis.length > 0 && (
+                <>
+                    <PrintCard>
+                        <div className="bg-gradient-to-r from-violet-50 to-fuchsia-50 rounded-xl p-4 border border-violet-200">
+                            <div className="flex items-center gap-2">
+                                <Globe className="w-5 h-5 text-violet-600" />
+                                <h4 className="font-bold text-violet-700">Country-Specific Competitive Analysis</h4>
+                            </div>
+                            <p className="text-xs text-slate-600 mt-1">Market positioning analysis for {countryCompetitorAnalysis.length} target {countryCompetitorAnalysis.length === 1 ? 'market' : 'markets'}</p>
+                        </div>
+                    </PrintCard>
+                    
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        {countryCompetitorAnalysis.slice(0, 4).map((countryAnalysis, idx) => (
+                            renderMatrix(
+                                countryAnalysis, 
+                                `${countryAnalysis.country} Market`, 
+                                countryColors[idx % countryColors.length],
+                                true
+                            )
+                        ))}
+                    </div>
+                </>
+            )}
+            
+            {/* Recommended Pricing (Global) */}
+            {competitorAnalysis?.suggested_pricing && (
                 <PrintCard>
                     <div className="bg-amber-50 rounded-xl p-5 border border-amber-200">
                         <div className="flex items-center gap-2 mb-3">
                             <TrendingUp className="w-5 h-5 text-amber-600" />
-                            <h4 className="font-bold text-amber-700">Recommended Pricing</h4>
+                            <h4 className="font-bold text-amber-700">Recommended Pricing Strategy</h4>
                         </div>
                         <p className="text-sm text-slate-700">{competitorAnalysis.suggested_pricing}</p>
                     </div>
