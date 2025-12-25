@@ -166,6 +166,8 @@ const Dashboard = () => {
   }, []);
 
   const handleRegister = () => {
+    // Save return URL for Google auth flow
+    localStorage.setItem('auth_return_url', '/dashboard');
     openAuthModal(reportData?.report_id);
   };
 
