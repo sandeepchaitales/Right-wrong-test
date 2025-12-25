@@ -384,10 +384,45 @@ const DetailedDimensionCard = ({ dimension, index }) => {
 const DigitalPresenceSection = ({ multiDomain, domainAnalysis, socialAvailability }) => {
     const categoryDomains = multiDomain?.category_domains || [];
     const countryDomains = multiDomain?.country_domains || [];
+    // Get ALL social handles from the platforms array
     const socialHandles = socialAvailability?.platforms || socialAvailability?.handles || [];
     
     const availableCount = [...categoryDomains, ...countryDomains].filter(d => d.available || d.status?.toLowerCase().includes('available')).length;
     const totalCount = categoryDomains.length + countryDomains.length;
+    
+    // Count social handle availability
+    const availableSocials = socialHandles.filter(s => s.available || s.status?.toLowerCase().includes('available')).length;
+    const takenSocials = socialHandles.filter(s => !s.available && s.status && !s.status?.toLowerCase().includes('available') && !s.status?.toLowerCase().includes('error') && !s.status?.toLowerCase().includes('unsupported')).length;
+    
+    const getStatusIcon = (s) => {
+        if (s.available || s.status?.toLowerCase().includes('available')) {
+            return <CheckCircle className="w-4 h-4 text-emerald-500" />;
+        }
+        if (s.status?.toLowerCase().includes('unsupported') || s.status?.toLowerCase().includes('error')) {
+            return <AlertCircle className="w-4 h-4 text-slate-400" />;
+        }
+        return <XOctagon className="w-4 h-4 text-red-500" />;
+    };
+    
+    const getStatusStyle = (s) => {
+        if (s.available || s.status?.toLowerCase().includes('available')) {
+            return 'bg-emerald-50 border-emerald-200';
+        }
+        if (s.status?.toLowerCase().includes('unsupported') || s.status?.toLowerCase().includes('error')) {
+            return 'bg-slate-50 border-slate-200';
+        }
+        return 'bg-red-50 border-red-200';
+    };
+    
+    const getBadgeStyle = (s) => {
+        if (s.available || s.status?.toLowerCase().includes('available')) {
+            return 'bg-emerald-100 text-emerald-700';
+        }
+        if (s.status?.toLowerCase().includes('unsupported') || s.status?.toLowerCase().includes('error')) {
+            return 'bg-slate-100 text-slate-500';
+        }
+        return 'bg-red-100 text-red-700';
+    };
     
     return (
         <div className="space-y-4">
@@ -455,33 +490,49 @@ const DigitalPresenceSection = ({ multiDomain, domainAnalysis, socialAvailabilit
                 </div>
             </PrintCard>
             
-            {/* Social Handles */}
+            {/* Social Handles - Show ALL platforms with their status */}
             {socialHandles.length > 0 && (
                 <PrintCard>
                     <div className="bg-white rounded-2xl p-6 border border-slate-200">
-                        <SubSectionHeader icon={AtSign} title="Social Handles" />
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        <div className="flex items-center justify-between mb-4">
+                            <SubSectionHeader icon={AtSign} title="Social Media Handles" />
+                            <div className="flex gap-2">
+                                <Badge className="bg-emerald-100 text-emerald-700 text-xs">
+                                    {availableSocials} Available
+                                </Badge>
+                                <Badge className="bg-red-100 text-red-700 text-xs">
+                                    {takenSocials} Taken
+                                </Badge>
+                            </div>
+                        </div>
+                        
+                        {/* Show handle being checked */}
+                        {socialAvailability?.handle && (
+                            <p className="text-xs text-slate-500 mb-3">
+                                Checking handle: <span className="font-mono font-bold">@{socialAvailability.handle}</span>
+                            </p>
+                        )}
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                             {socialHandles.map((s, i) => (
-                                <div key={i} className={`p-3 rounded-lg border flex items-center justify-between ${
-                                    s.available || s.status?.toLowerCase().includes('available')
-                                        ? 'bg-emerald-50 border-emerald-200'
-                                        : s.status?.toLowerCase().includes('unsupported') || s.status?.toLowerCase().includes('error')
-                                            ? 'bg-slate-50 border-slate-200'
-                                            : 'bg-red-50 border-red-200'
-                                }`}>
-                                    <span className="text-xs font-bold text-slate-700 capitalize">{s.platform || s.name}</span>
-                                    <Badge className={`text-xs ${
-                                        s.available || s.status?.toLowerCase().includes('available')
-                                            ? 'bg-emerald-100 text-emerald-700'
-                                            : s.status?.toLowerCase().includes('unsupported') || s.status?.toLowerCase().includes('error')
-                                                ? 'bg-slate-100 text-slate-500'
-                                                : 'bg-red-100 text-red-700'
-                                    }`}>
+                                <div key={i} className={`p-3 rounded-lg border flex items-center justify-between ${getStatusStyle(s)}`}>
+                                    <div className="flex items-center gap-2">
+                                        {getStatusIcon(s)}
+                                        <span className="text-xs font-bold text-slate-700 capitalize">{s.platform || s.name}</span>
+                                    </div>
+                                    <Badge className={`text-xs ${getBadgeStyle(s)}`}>
                                         {s.status || (s.available ? 'Available' : 'Taken')}
                                     </Badge>
                                 </div>
                             ))}
                         </div>
+                        
+                        {/* Recommendation */}
+                        {socialAvailability?.recommendation && (
+                            <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <p className="text-xs text-blue-700">{socialAvailability.recommendation}</p>
+                            </div>
+                        )}
                     </div>
                 </PrintCard>
             )}
