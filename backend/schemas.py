@@ -183,6 +183,17 @@ class CompetitorAnalysis(BaseModel):
     strategic_advantage: Optional[str] = Field(default="Analysis pending")
     suggested_pricing: Optional[str] = Field(default="N/A")
 
+class CountryCompetitorAnalysis(BaseModel):
+    country: str = Field(description="Country name (e.g., USA, India, UK)")
+    country_flag: Optional[str] = Field(default=None, description="Country flag emoji")
+    x_axis_label: Optional[str] = Field(default="Price: Low → High", description="X-axis label for this market")
+    y_axis_label: Optional[str] = Field(default="Quality: Basic → Premium", description="Y-axis label for this market")
+    competitors: List[Competitor] = Field(default=[], description="Top competitors in this country's market")
+    user_brand_position: Optional[UserBrandPosition] = None
+    white_space_analysis: Optional[str] = Field(default="Analysis pending", description="White space opportunity in this market")
+    strategic_advantage: Optional[str] = Field(default="Analysis pending", description="Strategic advantage in this market")
+    market_entry_recommendation: Optional[str] = Field(default=None, description="Recommendation for entering this market")
+
 class Recommendation(BaseModel):
     title: str
     content: str
