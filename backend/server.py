@@ -193,6 +193,41 @@ def aggressive_json_repair(json_str):
     More aggressive JSON repair for severely malformed responses.
     """
     import json
+    import re
+    
+    # First, clean up any markdown formatting that might have leaked into JSON
+    # Remove **text** markdown bold
+    json_str = re.sub(r'\*\*([^*]+)\*\*', r'\1', json_str)
+    # Remove *text* markdown italic
+    json_str = re.sub(r'(?<![*])\*([^*]+)\*(?![*])', r'\1', json_str)
+    # Remove markdown headers
+    json_str = re.sub(r'^#+\s+', '', json_str, flags=re.MULTILINE)
+    # Remove markdown bullet points that might be in strings
+    json_str = re.sub(r'^\s*[-*]\s+', '', json_str, flags=re.MULTILINE)
+    
+    # Replace literal newlines inside strings with escaped newlines
+    # This is a common issue with LLM responses
+    def fix_newlines_in_strings(s):
+        result = []
+        in_string = False
+        i = 0
+        while i < len(s):
+            c = s[i]
+            if c == '"' and (i == 0 or s[i-1] != '\\'):
+                in_string = not in_string
+                result.append(c)
+            elif c == '\n' and in_string:
+                result.append('\\n')
+            elif c == '\r' and in_string:
+                result.append('\\r')
+            elif c == '\t' and in_string:
+                result.append('\\t')
+            else:
+                result.append(c)
+            i += 1
+        return ''.join(result)
+    
+    json_str = fix_newlines_in_strings(json_str)
     
     # Try standard repair first
     repaired = repair_json(json_str)
