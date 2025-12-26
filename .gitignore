@@ -94,3 +94,7 @@ frontend/node_modules/.cache/default-development/8.pack
 # Environment files - NOT ignored for Emergent deployment
 # *.env
 # *.env.*
+-e 
+# Environment files
+*.env
+*.env.*
