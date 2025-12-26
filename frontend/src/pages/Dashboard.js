@@ -1634,6 +1634,8 @@ const Dashboard = () => {
                     body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                     .print-card { break-inside: avoid !important; page-break-inside: avoid !important; margin-bottom: 8px; }
                     .no-print { display: none !important; }
+                    .print-page-break { page-break-before: always !important; break-before: page !important; }
+                    .print-section { break-inside: avoid !important; }
                 }
             `}</style>
 
