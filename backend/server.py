@@ -783,10 +783,7 @@ async def evaluate_brands(request: BrandEvaluationRequest):
     Market Scope: {request.market_scope}
     Target Countries: {request.countries}
     
-    ⚠️ CURRENCY INSTRUCTION (MANDATORY):
-    Number of countries selected: {len(request.countries)}
-    {"USE " + get_country_currency(request.countries[0]) + " for ALL cost estimates (single country: " + request.countries[0] + ")" if len(request.countries) == 1 else "USE USD ($) for ALL cost estimates (multiple countries selected)"}
-    Apply this currency to: filing_cost, opposition_defense_cost, total_estimated_cost, mitigation_strategies costs, suggested_pricing
+    {format_trademark_costs_for_prompt(request.countries)}
 
     IMPORTANT: Use the above business context to:
     1. Define the user's customer avatar accurately
