@@ -431,17 +431,25 @@ async def evaluate_brands(request: BrandEvaluationRequest):
     
     trademark_research_context = "\n\n".join(trademark_research_data)
     
-    # 2. Check Visibility
+    # 2. Check Visibility (Enhanced with category-aware app store search)
     visibility_data = []
     for brand in request.brand_names:
-        vis = check_visibility(brand)
+        # Pass category and industry for comprehensive app store search
+        vis = check_visibility(brand, category=request.category, industry=request.industry or "")
         visibility_data.append(f"BRAND: {brand}")
         visibility_data.append("GOOGLE TOP RESULTS:")
         for res in vis['google'][:10]:
             visibility_data.append(f"  - {res}")
         visibility_data.append("APP STORE RESULTS:")
-        for res in vis['apps'][:5]:
+        for res in vis['apps'][:10]:  # Increased limit to show more app results
             visibility_data.append(f"  - {res}")
+        # Add phonetic variants that were checked
+        if vis.get('phonetic_variants_checked'):
+            visibility_data.append(f"PHONETIC VARIANTS CHECKED: {', '.join(vis['phonetic_variants_checked'])}")
+        # Add detailed app search summary for LLM
+        if vis.get('app_search_summary'):
+            visibility_data.append("\nDETAILED APP SEARCH ANALYSIS:")
+            visibility_data.append(vis['app_search_summary'])
         visibility_data.append("---")
     
     visibility_context = "\n".join(visibility_data)
