@@ -493,6 +493,17 @@ async def evaluate_brands(request: BrandEvaluationRequest):
     3. Compare against found competitors using INTENT MATCHING (not keyword matching)
     4. Ensure brand name fits the specified vibe and USP
 
+    ⚠️⚠️⚠️ REAL-TIME TRADEMARK RESEARCH DATA (CRITICAL - USE THIS!) ⚠️⚠️⚠️
+    {trademark_research_context}
+    
+    INSTRUCTION FOR TRADEMARK RESEARCH:
+    - This data comes from REAL web searches of trademark databases and company registries
+    - If trademark conflicts are found, you MUST reference them by name and application number
+    - Company conflicts indicate common law trademark risk
+    - Use the risk scores to inform your overall verdict
+    - If Critical/High conflicts exist, strongly consider REJECT or CAUTION verdict
+    - Include specific conflict names in your trademark_risk section
+
     ⚠️ CRITICAL: STRING SIMILARITY ANALYSIS (PRE-COMPUTED - DO NOT IGNORE!) ⚠️
     {similarity_context}
     
