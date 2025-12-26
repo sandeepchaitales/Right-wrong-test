@@ -725,11 +725,11 @@ async def evaluate_brands(request: BrandEvaluationRequest):
             logging.warning(f"FAMOUS BRAND DETECTED: {brand} matches {famous_check['matched_brand']}")
     
     if LlmChat and EMERGENT_KEY:
-        llm_chat = LlmChat(
-            api_key=EMERGENT_KEY,
-            session_id=f"rightname_{uuid.uuid4()}",
-            system_message=SYSTEM_PROMPT
-        ).with_model("openai", "gpt-4o")
+        # Try primary model first, then fallback
+        models_to_try = [
+            ("openai", "gpt-4o"),
+            ("openai", "gpt-4o-mini"),  # Fallback model
+        ]
     else:
         raise HTTPException(status_code=500, detail="LLM Integration not initialized (Check EMERGENT_LLM_KEY)")
     
