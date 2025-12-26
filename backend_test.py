@@ -1043,31 +1043,250 @@ class BrandEvaluationTester:
             self.log_test("Emergent LLM Key - Exception", False, str(e))
             return False
 
+    def test_actual_uspto_costs_usa(self):
+        """Test Case 1 - USA Single Country: Verify ACTUAL USPTO costs (not currency conversion)"""
+        payload = {
+            "brand_names": ["USACostTest"],
+            "category": "Technology",
+            "positioning": "Premium",
+            "market_scope": "Single Country",
+            "countries": ["USA"]
+        }
+        
+        try:
+            print(f"\n🇺🇸 Testing ACTUAL USPTO Costs - USA Single Country...")
+            print(f"Expected ACTUAL USPTO Costs:")
+            print(f"  - Filing Cost: $275-$400 per class")
+            print(f"  - Opposition Defense: $2,500-$10,000")
+            print(f"  - Trademark Search: $500-$1,500")
+            print(f"  - Legal Fees: $1,500-$5,000")
+            
+            response = requests.post(
+                f"{self.api_url}/evaluate", 
+                json=payload, 
+                headers={'Content-Type': 'application/json'},
+                timeout=180
+            )
+            
+            print(f"Response Status: {response.status_code}")
+            
+            if response.status_code != 200:
+                error_msg = f"HTTP {response.status_code}: {response.text[:300]}"
+                self.log_test("ACTUAL USPTO Costs - HTTP Error", False, error_msg)
+                return False
+            
+            try:
+                data = response.json()
+                
+                if not data.get("brand_scores") or len(data["brand_scores"]) == 0:
+                    self.log_test("ACTUAL USPTO Costs - Structure", False, "No brand scores returned")
+                    return False
+                
+                brand = data["brand_scores"][0]
+                cost_issues = []
+                
+                # Test 1: Check registration_timeline.filing_cost for ACTUAL USPTO amounts
+                if "registration_timeline" in brand and brand["registration_timeline"]:
+                    timeline = brand["registration_timeline"]
+                    filing_cost = timeline.get("filing_cost", "")
+                    print(f"Found filing_cost: {filing_cost}")
+                    
+                    # Check for ACTUAL USPTO filing costs ($275-$400)
+                    if filing_cost:
+                        if not any(cost in filing_cost for cost in ["$275", "$300", "$350", "$400"]):
+                            cost_issues.append(f"filing_cost should show ACTUAL USPTO costs ($275-$400), got: {filing_cost}")
+                        if "₹4,500" in filing_cost or "₹9,000" in filing_cost:
+                            cost_issues.append(f"filing_cost shows Indian costs converted to USD instead of ACTUAL USPTO costs: {filing_cost}")
+                    
+                    # Test 2: Check opposition_defense_cost for ACTUAL USPTO amounts
+                    defense_cost = timeline.get("opposition_defense_cost", "")
+                    print(f"Found opposition_defense_cost: {defense_cost}")
+                    
+                    if defense_cost:
+                        if not any(cost in defense_cost for cost in ["$2,500", "$5,000", "$7,500", "$10,000"]):
+                            cost_issues.append(f"opposition_defense_cost should show ACTUAL USPTO costs ($2,500-$10,000), got: {defense_cost}")
+                        if "₹50,000" in defense_cost or "₹2,00,000" in defense_cost:
+                            cost_issues.append(f"opposition_defense_cost shows Indian costs converted to USD instead of ACTUAL USPTO costs: {defense_cost}")
+                
+                # Test 3: Check mitigation_strategies for ACTUAL USPTO costs
+                if "mitigation_strategies" in brand and brand["mitigation_strategies"]:
+                    for i, strategy in enumerate(brand["mitigation_strategies"]):
+                        if isinstance(strategy, dict) and "estimated_cost" in strategy:
+                            cost = strategy["estimated_cost"]
+                            print(f"Found mitigation strategy {i} cost: {cost}")
+                            
+                            if cost and "$" in cost:
+                                # Should not be simple currency conversion from Indian amounts
+                                if "₹" in str(cost) or any(bad_amount in cost for bad_amount in ["$367", "$408", "$1,225"]):  # These would be INR converted
+                                    cost_issues.append(f"mitigation_strategies[{i}].estimated_cost appears to be currency conversion, not ACTUAL USPTO costs: {cost}")
+                
+                # Test 4: Check for trademark search and legal fees in response
+                response_text = json.dumps(data)
+                print(f"Checking for trademark search costs...")
+                
+                # Look for trademark search costs
+                if "trademark_search" in response_text.lower() or "search_cost" in response_text.lower():
+                    if not any(cost in response_text for cost in ["$500", "$750", "$1,000", "$1,500"]):
+                        print(f"Warning: Trademark search costs may not reflect ACTUAL USPTO range ($500-$1,500)")
+                
+                # Look for legal fees
+                if "legal_fees" in response_text.lower() or "attorney" in response_text.lower():
+                    if not any(cost in response_text for cost in ["$1,500", "$2,000", "$3,000", "$5,000"]):
+                        print(f"Warning: Legal fees may not reflect ACTUAL USPTO range ($1,500-$5,000)")
+                
+                if cost_issues:
+                    self.log_test("ACTUAL USPTO Costs - USA Single Country", False, "; ".join(cost_issues))
+                    return False
+                
+                self.log_test("ACTUAL USPTO Costs - USA Single Country", True, "All costs show ACTUAL USPTO amounts (not currency conversion)")
+                return True
+                
+            except json.JSONDecodeError as e:
+                self.log_test("ACTUAL USPTO Costs - JSON", False, f"Invalid JSON response: {str(e)}")
+                return False
+                
+        except requests.exceptions.Timeout:
+            self.log_test("ACTUAL USPTO Costs - Timeout", False, "Request timed out after 180 seconds")
+            return False
+        except Exception as e:
+            self.log_test("ACTUAL USPTO Costs - Exception", False, str(e))
+            return False
+
+    def test_actual_ip_india_costs(self):
+        """Test Case 2 - India Single Country: Verify ACTUAL IP India costs (not currency conversion)"""
+        payload = {
+            "brand_names": ["IndiaCostTest"],
+            "category": "Fashion",
+            "positioning": "Premium",
+            "market_scope": "Single Country",
+            "countries": ["India"]
+        }
+        
+        try:
+            print(f"\n🇮🇳 Testing ACTUAL IP India Costs - India Single Country...")
+            print(f"Expected ACTUAL IP India Costs:")
+            print(f"  - Filing Cost: ₹4,500-₹9,000 per class")
+            print(f"  - Opposition Defense: ₹50,000-₹2,00,000")
+            print(f"  - Trademark Search: ₹3,000-₹5,000")
+            print(f"  - Legal Fees: ₹10,000-₹30,000")
+            
+            response = requests.post(
+                f"{self.api_url}/evaluate", 
+                json=payload, 
+                headers={'Content-Type': 'application/json'},
+                timeout=180
+            )
+            
+            print(f"Response Status: {response.status_code}")
+            
+            if response.status_code != 200:
+                error_msg = f"HTTP {response.status_code}: {response.text[:300]}"
+                self.log_test("ACTUAL IP India Costs - HTTP Error", False, error_msg)
+                return False
+            
+            try:
+                data = response.json()
+                
+                if not data.get("brand_scores") or len(data["brand_scores"]) == 0:
+                    self.log_test("ACTUAL IP India Costs - Structure", False, "No brand scores returned")
+                    return False
+                
+                brand = data["brand_scores"][0]
+                cost_issues = []
+                
+                # Test 1: Check registration_timeline.filing_cost for ACTUAL IP India amounts
+                if "registration_timeline" in brand and brand["registration_timeline"]:
+                    timeline = brand["registration_timeline"]
+                    filing_cost = timeline.get("filing_cost", "")
+                    print(f"Found filing_cost: {filing_cost}")
+                    
+                    # Check for ACTUAL IP India filing costs (₹4,500-₹9,000)
+                    if filing_cost:
+                        if not any(cost in filing_cost for cost in ["₹4,500", "₹6,000", "₹7,500", "₹9,000"]):
+                            cost_issues.append(f"filing_cost should show ACTUAL IP India costs (₹4,500-₹9,000), got: {filing_cost}")
+                        if "$275" in filing_cost or "$400" in filing_cost:
+                            cost_issues.append(f"filing_cost shows US costs converted to INR instead of ACTUAL IP India costs: {filing_cost}")
+                    
+                    # Test 2: Check opposition_defense_cost for ACTUAL IP India amounts
+                    defense_cost = timeline.get("opposition_defense_cost", "")
+                    print(f"Found opposition_defense_cost: {defense_cost}")
+                    
+                    if defense_cost:
+                        if not any(cost in defense_cost for cost in ["₹50,000", "₹1,00,000", "₹1,50,000", "₹2,00,000"]):
+                            cost_issues.append(f"opposition_defense_cost should show ACTUAL IP India costs (₹50,000-₹2,00,000), got: {defense_cost}")
+                        if "$2,500" in defense_cost or "$10,000" in defense_cost:
+                            cost_issues.append(f"opposition_defense_cost shows US costs converted to INR instead of ACTUAL IP India costs: {defense_cost}")
+                
+                # Test 3: Check mitigation_strategies for ACTUAL IP India costs
+                if "mitigation_strategies" in brand and brand["mitigation_strategies"]:
+                    for i, strategy in enumerate(brand["mitigation_strategies"]):
+                        if isinstance(strategy, dict) and "estimated_cost" in strategy:
+                            cost = strategy["estimated_cost"]
+                            print(f"Found mitigation strategy {i} cost: {cost}")
+                            
+                            if cost and "₹" in cost:
+                                # Should not be simple currency conversion from US amounts
+                                if "$" in str(cost) or any(bad_amount in cost for bad_amount in ["₹22,500", "₹81,500"]):  # These would be USD converted
+                                    cost_issues.append(f"mitigation_strategies[{i}].estimated_cost appears to be currency conversion, not ACTUAL IP India costs: {cost}")
+                
+                # Test 4: Check for trademark search and legal fees in response
+                response_text = json.dumps(data)
+                print(f"Checking for trademark search costs...")
+                
+                # Look for trademark search costs
+                if "trademark_search" in response_text.lower() or "search_cost" in response_text.lower():
+                    if not any(cost in response_text for cost in ["₹3,000", "₹4,000", "₹5,000"]):
+                        print(f"Warning: Trademark search costs may not reflect ACTUAL IP India range (₹3,000-₹5,000)")
+                
+                # Look for legal fees
+                if "legal_fees" in response_text.lower() or "attorney" in response_text.lower():
+                    if not any(cost in response_text for cost in ["₹10,000", "₹15,000", "₹20,000", "₹30,000"]):
+                        print(f"Warning: Legal fees may not reflect ACTUAL IP India range (₹10,000-₹30,000)")
+                
+                if cost_issues:
+                    self.log_test("ACTUAL IP India Costs - India Single Country", False, "; ".join(cost_issues))
+                    return False
+                
+                self.log_test("ACTUAL IP India Costs - India Single Country", True, "All costs show ACTUAL IP India amounts (not currency conversion)")
+                return True
+                
+            except json.JSONDecodeError as e:
+                self.log_test("ACTUAL IP India Costs - JSON", False, f"Invalid JSON response: {str(e)}")
+                return False
+                
+        except requests.exceptions.Timeout:
+            self.log_test("ACTUAL IP India Costs - Timeout", False, "Request timed out after 180 seconds")
+            return False
+        except Exception as e:
+            self.log_test("ACTUAL IP India Costs - Exception", False, str(e))
+            return False
+
     def run_currency_tests_only(self):
         """Run only the currency logic tests as requested"""
-        print("💰 Starting Currency Logic Tests...")
+        print("💰 Starting ACTUAL Country-Specific Trademark Cost Tests...")
         print(f"Testing against: {self.base_url}")
+        print("🎯 FOCUS: Verifying ACTUAL trademark office costs (NOT currency conversion)")
         
         # Test API health first
         if not self.test_api_health():
             print("❌ API health check failed, stopping tests")
             return False
         
-        # PRIORITY: Test currency logic as per review request
-        print("\n💰 CURRENCY LOGIC TESTS:")
-        print("Testing currency feature in cost estimates...")
+        # PRIORITY: Test ACTUAL country-specific trademark costs as per review request
+        print("\n💰 ACTUAL TRADEMARK OFFICE COST TESTS:")
+        print("Testing that costs match respective trademark office fees...")
         
-        # Test Case 1: Single Country USA
-        self.test_currency_single_country_usa()
+        # Test Case 1: USA Single Country - ACTUAL USPTO costs
+        self.test_actual_uspto_costs_usa()
         
-        # Test Case 2: Single Country India  
-        self.test_currency_single_country_india()
+        # Test Case 2: India Single Country - ACTUAL IP India costs
+        self.test_actual_ip_india_costs()
         
-        # Test Case 3: Multiple Countries
+        # Test Case 3: Multiple Countries (existing test)
         self.test_currency_multiple_countries()
         
         # Print summary
-        print(f"\n📊 Currency Test Summary:")
+        print(f"\n📊 ACTUAL Trademark Cost Test Summary:")
         print(f"Tests Run: {self.tests_run}")
         print(f"Tests Passed: {self.tests_passed}")
         print(f"Success Rate: {(self.tests_passed/self.tests_run)*100:.1f}%")
