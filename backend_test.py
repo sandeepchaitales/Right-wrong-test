@@ -1152,6 +1152,109 @@ class BrandEvaluationTester:
             self.log_test("ACTUAL USPTO Costs - Exception", False, str(e))
             return False
 
+    def test_score_impact_validation_fix(self):
+        """Test the score_impact validation fix with TestFix brand"""
+        payload = {
+            "brand_names": ["TestFix"],
+            "category": "Technology",
+            "positioning": "Premium",
+            "market_scope": "Single Country",
+            "countries": ["USA"]
+        }
+        
+        try:
+            print(f"\n🔧 Testing score_impact validation fix...")
+            print(f"Payload: {json.dumps(payload, indent=2)}")
+            
+            response = requests.post(
+                f"{self.api_url}/evaluate", 
+                json=payload, 
+                headers={'Content-Type': 'application/json'},
+                timeout=180  # Extended timeout for LLM processing
+            )
+            
+            print(f"Response Status: {response.status_code}")
+            
+            # Test 1: API should return 200 OK (not validation error)
+            if response.status_code != 200:
+                error_msg = f"HTTP {response.status_code}: {response.text[:300]}"
+                # Check specifically for validation errors
+                if "validation" in response.text.lower() or "score_impact" in response.text.lower():
+                    self.log_test("Score Impact Validation Fix - Validation Error", False, f"Validation error still present: {error_msg}")
+                else:
+                    self.log_test("Score Impact Validation Fix - HTTP Error", False, error_msg)
+                return False
+            
+            try:
+                data = response.json()
+                print(f"✅ Response received successfully, checking for validation issues...")
+                
+                # Test 2: Response should contain brand_scores with namescore and verdict
+                if not data.get("brand_scores") or len(data["brand_scores"]) == 0:
+                    self.log_test("Score Impact Validation Fix - Brand Scores Missing", False, "No brand scores returned")
+                    return False
+                
+                brand = data["brand_scores"][0]
+                
+                # Check for namescore
+                if "namescore" not in brand:
+                    self.log_test("Score Impact Validation Fix - NameScore Missing", False, "namescore field missing from response")
+                    return False
+                
+                # Check for verdict
+                if "verdict" not in brand:
+                    self.log_test("Score Impact Validation Fix - Verdict Missing", False, "verdict field missing from response")
+                    return False
+                
+                # Test 3: Check for score_impact validation errors in response
+                response_str = json.dumps(data).lower()
+                if "score_impact" in response_str and "validation" in response_str:
+                    self.log_test("Score Impact Validation Fix - Validation Error in Response", False, "score_impact validation error found in response content")
+                    return False
+                
+                if "error" in response_str and "score_impact" in response_str:
+                    self.log_test("Score Impact Validation Fix - Score Impact Error", False, "score_impact error found in response content")
+                    return False
+                
+                # Test 4: Check domain_analysis.score_impact field specifically
+                if "domain_analysis" in brand and brand["domain_analysis"]:
+                    domain_analysis = brand["domain_analysis"]
+                    if "score_impact" in domain_analysis:
+                        score_impact = domain_analysis["score_impact"]
+                        # Should be a string, not causing validation errors
+                        if not isinstance(score_impact, str):
+                            self.log_test("Score Impact Validation Fix - Type Issue", False, f"score_impact should be string, got {type(score_impact)}: {score_impact}")
+                            return False
+                        print(f"✅ score_impact field present and valid: {score_impact}")
+                
+                # Test 5: Verify TestFix brand name is in response
+                if brand.get("brand_name") != "TestFix":
+                    self.log_test("Score Impact Validation Fix - Brand Name", False, f"Expected 'TestFix', got '{brand.get('brand_name')}'")
+                    return False
+                
+                namescore = brand.get("namescore")
+                verdict = brand.get("verdict")
+                
+                print(f"✅ TestFix evaluation completed successfully:")
+                print(f"   - NameScore: {namescore}")
+                print(f"   - Verdict: {verdict}")
+                print(f"   - No score_impact validation errors detected")
+                
+                self.log_test("Score Impact Validation Fix", True, 
+                            f"API returned 200 OK with valid response. NameScore: {namescore}, Verdict: {verdict}, No validation errors")
+                return True
+                
+            except json.JSONDecodeError as e:
+                self.log_test("Score Impact Validation Fix - JSON Parse", False, f"Invalid JSON response: {str(e)}")
+                return False
+                
+        except requests.exceptions.Timeout:
+            self.log_test("Score Impact Validation Fix - Timeout", False, "Request timed out after 180 seconds")
+            return False
+        except Exception as e:
+            self.log_test("Score Impact Validation Fix - Exception", False, str(e))
+            return False
+
     def test_actual_ip_india_costs(self):
         """Test Case 2 - India Single Country: Verify ACTUAL IP India costs (not currency conversion)"""
         payload = {
