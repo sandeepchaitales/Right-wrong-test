@@ -51,6 +51,16 @@ class DomainAnalysis(BaseModel):
     strategy_note: str = Field(default="")
     score_impact: Optional[str] = Field(default="-1 point max for taken .com", description="Score impact explanation")
     
+    @field_validator('score_impact', mode='before')
+    @classmethod
+    def normalize_score_impact(cls, v):
+        """Convert score_impact to string if it's an int"""
+        if v is None:
+            return "-1 point max for taken .com"
+        if isinstance(v, (int, float)):
+            return str(v)
+        return str(v)
+    
     @field_validator('alternatives', mode='before')
     @classmethod
     def normalize_alternatives(cls, v):
