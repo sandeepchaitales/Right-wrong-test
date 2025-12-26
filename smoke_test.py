@@ -15,11 +15,11 @@ def test_emergent_llm_key():
     base_url = "https://trademark-research.preview.emergentagent.com"
     api_url = f"{base_url}/api"
     
-    # Exact payload from review request
+    # Exact payload from review request (fixed positioning field)
     payload = {
         "brand_names": ["TestBrand"],
-        "category": "Technology", 
-        "positioning": "Premium software solutions",
+        "category": "Technology",
+        "positioning": "Premium",  # Fixed: must be one of the enum values
         "market_scope": "Multi-Country",
         "countries": ["USA"]
     }
