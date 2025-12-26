@@ -910,6 +910,9 @@ async def evaluate_brands(request: BrandEvaluationRequest):
                 else:
                     raise ValueError("Invalid response format from LLM")
             
+            # Pre-process data to fix common LLM output issues
+            data = fix_llm_response_types(data)
+            
             evaluation = BrandEvaluationResponse(**data)
             
             # OVERRIDE: Force REJECT verdict for famous brands
