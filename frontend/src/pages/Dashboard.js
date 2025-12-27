@@ -254,6 +254,98 @@ const ScoreCardRevamped = ({ score, verdict }) => {
     );
 };
 
+// ============ PERFORMANCE RADAR CHART ============
+const PerformanceRadar = ({ dimensions, brandName }) => {
+    if (!dimensions || dimensions.length === 0) return null;
+    
+    // Transform dimensions data for Recharts radar
+    const radarData = dimensions.slice(0, 8).map(dim => ({
+        dimension: dim.name?.length > 12 ? dim.name.substring(0, 12) + '...' : dim.name,
+        fullName: dim.name,
+        score: dim.score || 0,
+        fullMark: 10
+    }));
+    
+    return (
+        <PrintCard>
+            <div className="bg-white rounded-2xl p-6 border border-slate-200 print:p-4">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-fuchsia-100 flex items-center justify-center">
+                            <Target className="w-4 h-4 text-fuchsia-600" />
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-bold text-slate-800">Performance Radar</h3>
+                            <p className="text-xs text-slate-500">Dimension Analysis</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="h-64 print:h-56">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                            <PolarGrid 
+                                stroke="#e2e8f0" 
+                                strokeDasharray="3 3"
+                            />
+                            <PolarAngleAxis 
+                                dataKey="dimension" 
+                                tick={{ 
+                                    fill: '#64748b', 
+                                    fontSize: 10,
+                                    fontWeight: 500
+                                }}
+                                tickLine={false}
+                            />
+                            <PolarRadiusAxis 
+                                angle={90} 
+                                domain={[0, 10]} 
+                                tick={{ fill: '#94a3b8', fontSize: 9 }}
+                                tickCount={6}
+                                axisLine={false}
+                            />
+                            <Radar
+                                name={brandName || "Score"}
+                                dataKey="score"
+                                stroke="#a855f7"
+                                fill="#a855f7"
+                                fillOpacity={0.3}
+                                strokeWidth={2}
+                                dot={{ 
+                                    fill: '#a855f7', 
+                                    strokeWidth: 0,
+                                    r: 4
+                                }}
+                                activeDot={{
+                                    fill: '#7c3aed',
+                                    strokeWidth: 0,
+                                    r: 6
+                                }}
+                            />
+                            <Tooltip 
+                                content={({ active, payload }) => {
+                                    if (active && payload && payload.length) {
+                                        const data = payload[0].payload;
+                                        return (
+                                            <div className="bg-slate-900 text-white px-3 py-2 rounded-lg shadow-lg text-xs">
+                                                <p className="font-bold">{data.fullName}</p>
+                                                <p className="text-fuchsia-300">Score: {data.score}/10</p>
+                                            </div>
+                                        );
+                                    }
+                                    return null;
+                                }}
+                            />
+                        </RadarChart>
+                    </ResponsiveContainer>
+                </div>
+                <div className="mt-2 text-center">
+                    <p className="text-xs text-slate-400">Hover/tap points for details</p>
+                </div>
+            </div>
+        </PrintCard>
+    );
+};
+
 // ============ QUICK DIMENSIONS GRID ============
 const QuickDimensionsGrid = ({ dimensions }) => (
     <PrintCard>
