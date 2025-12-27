@@ -1802,7 +1802,11 @@ const Dashboard = () => {
                 </div>
                 <div className="flex items-center gap-3">
                     <Badge variant="outline" className="hidden md:flex">
-                        {query.category} • {query.countries?.length === 1 ? query.countries[0] : (query.countries?.length > 1 ? `${query.countries.length} Countries` : query.market_scope)}
+                        {query.category} • {query.countries?.length === 1 
+                            ? `${getCountryFlag(query.countries[0])} ${getCountryName(query.countries[0])}` 
+                            : (query.countries?.length > 1 
+                                ? `${query.countries.length} Countries` 
+                                : query.market_scope)}
                     </Badge>
                     {isAuthenticated ? (
                         <Button onClick={() => window.print()} className="gap-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl">
