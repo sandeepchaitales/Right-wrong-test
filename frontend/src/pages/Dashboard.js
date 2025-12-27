@@ -1013,8 +1013,7 @@ const MarketIntelligenceSection = ({ domainAnalysis, visibilityAnalysis, cultura
                                 const countryName = typeof c.country === 'object' ? c.country?.name : c.country;
                                 return (
                                     <div key={i} className="bg-gradient-to-br from-fuchsia-50 to-white border border-fuchsia-200 rounded-xl p-4 text-center">
-                                        <div className="text-3xl mb-2">{getCountryFlag(countryName)}</div>
-                                        <h4 className="font-bold text-slate-800 text-sm">{countryName}</h4>
+                                        <h4 className="font-bold text-slate-800 text-sm mb-2">{countryName}</h4>
                                         <div className="text-2xl font-black text-fuchsia-600 my-2">{c.cultural_resonance_score}/10</div>
                                         <p className="text-xs text-slate-500">{c.cultural_notes}</p>
                                     </div>
