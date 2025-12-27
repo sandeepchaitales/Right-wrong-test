@@ -261,14 +261,11 @@ const InputSummarySection = ({ query, brandName, reportId, date }) => {
                         </div>
                         <div className="space-y-1 col-span-2">
                             <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">Target Countries</p>
-                            <div className="flex items-center gap-3 flex-wrap">
-                                {query?.countries?.map((country, idx) => (
-                                    <span key={idx} className="inline-flex items-center gap-1 text-sm font-semibold text-slate-800">
-                                        <CountryMapIcon country={country} className="w-5 h-4 text-slate-600" />
-                                        <span>{country}</span>
-                                    </span>
-                                )) || <span className="text-sm font-semibold text-slate-800">Not specified</span>}
-                            </div>
+                            <p className="text-sm font-semibold text-slate-800">
+                                {query?.countries?.map((c, i) => (
+                                    <span key={i}>{getCountryFlag(c)} {c}{i < query.countries.length - 1 ? ', ' : ''}</span>
+                                )) || 'Not specified'}
+                            </p>
                         </div>
                     </div>
                 </div>
