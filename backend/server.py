@@ -699,8 +699,10 @@ FAMOUS_BRANDS = {
 def check_famous_brand(brand_name: str) -> dict:
     """
     Check if brand name matches a famous brand (case-insensitive).
-    Uses multiple matching strategies: exact, normalized, and phonetic similarity.
+    Uses multiple matching strategies: exact, normalized, phonetic encoding, and similarity.
     """
+    import re
+    
     normalized = brand_name.lower().strip()
     
     # Exact match
@@ -711,16 +713,52 @@ def check_famous_brand(brand_name: str) -> dict:
             "reason": f"'{brand_name}' is an exact match of the famous brand '{normalized.title()}'. This name is legally protected and cannot be used."
         }
     
-    # Check without spaces/hyphens/underscores and with common letter substitutions
+    # Normalize: remove spaces/hyphens/underscores
     normalized_clean = normalized.replace(" ", "").replace("-", "").replace("_", "")
     
-    # Remove doubled letters for comparison (e.g., "kingg" -> "king")
-    import re
+    # Remove doubled letters (e.g., "kingg" -> "king")
     normalized_dedupe = re.sub(r'(.)\1+', r'\1', normalized_clean)
+    
+    # Phonetic normalization: replace similar-sounding letters
+    def phonetic_normalize(text):
+        """Convert text to phonetic representation for matching similar sounds"""
+        text = text.lower()
+        # Common sound substitutions
+        replacements = [
+            ('q', 'k'),      # q sounds like k
+            ('ck', 'k'),     # ck sounds like k
+            ('ph', 'f'),     # ph sounds like f
+            ('gh', 'g'),     # gh often sounds like g
+            ('wh', 'w'),     # wh sounds like w
+            ('wr', 'r'),     # wr sounds like r
+            ('kn', 'n'),     # kn sounds like n
+            ('gn', 'n'),     # gn sounds like n
+            ('mb', 'm'),     # mb at end sounds like m
+            ('mn', 'n'),     # mn sounds like n
+            ('sc', 's'),     # sc can sound like s
+            ('ce', 'se'),    # ce sounds like se
+            ('ci', 'si'),    # ci sounds like si
+            ('cy', 'sy'),    # cy sounds like sy
+            ('ee', 'i'),     # ee sounds like i
+            ('ea', 'i'),     # ea can sound like i
+            ('oo', 'u'),     # oo sounds like u
+            ('ou', 'u'),     # ou can sound like u
+            ('x', 'ks'),     # x sounds like ks
+            ('z', 's'),      # z sounds like s
+            ('v', 'w'),      # v can sound like w in some accents
+            ('y', 'i'),      # y often sounds like i
+        ]
+        for old, new in replacements:
+            text = text.replace(old, new)
+        # Remove vowels for consonant skeleton comparison
+        return text
+    
+    phonetic_input = phonetic_normalize(normalized_clean)
     
     for famous in FAMOUS_BRANDS:
         famous_clean = famous.replace(" ", "").replace("-", "")
         famous_dedupe = re.sub(r'(.)\1+', r'\1', famous_clean)
+        famous_phonetic = phonetic_normalize(famous_clean)
         
         # Direct match after normalization
         if normalized_clean == famous_clean:
@@ -736,6 +774,14 @@ def check_famous_brand(brand_name: str) -> dict:
                 "is_famous": True,
                 "matched_brand": famous.title(),
                 "reason": f"'{brand_name}' is a variation of the famous brand '{famous.title()}' (letter doubling detected). This name will cause trademark conflicts."
+            }
+        
+        # PHONETIC MATCH - key fix for mobiqwik vs mobikwik
+        if phonetic_input == famous_phonetic:
+            return {
+                "is_famous": True,
+                "matched_brand": famous.title(),
+                "reason": f"'{brand_name}' sounds identical to the famous brand '{famous.title()}'. This name will cause trademark conflicts due to phonetic similarity."
             }
         
         # Check if input contains the famous brand name
@@ -754,18 +800,27 @@ def check_famous_brand(brand_name: str) -> dict:
                 "reason": f"'{brand_name}' is contained within the famous brand '{famous.title()}'. This may cause trademark conflicts."
             }
     
-    # Phonetic similarity check using jellyfish
+    # Jaro-Winkler similarity check using jellyfish
     try:
         import jellyfish
         for famous in FAMOUS_BRANDS:
             famous_clean = famous.replace(" ", "")
             # Jaro-Winkler similarity (0-1, higher = more similar)
             similarity = jellyfish.jaro_winkler_similarity(normalized_clean, famous_clean)
-            if similarity >= 0.90:  # 90% similar
+            if similarity >= 0.88:  # 88% similar (lowered threshold)
                 return {
                     "is_famous": True,
                     "matched_brand": famous.title(),
                     "reason": f"'{brand_name}' is phonetically very similar ({int(similarity*100)}%) to the famous brand '{famous.title()}'. This will cause trademark conflicts."
+                }
+            
+            # Also check phonetic versions
+            phonetic_similarity = jellyfish.jaro_winkler_similarity(phonetic_input, phonetic_normalize(famous_clean))
+            if phonetic_similarity >= 0.90:
+                return {
+                    "is_famous": True,
+                    "matched_brand": famous.title(),
+                    "reason": f"'{brand_name}' sounds very similar to the famous brand '{famous.title()}'. This will cause trademark conflicts."
                 }
     except ImportError:
         pass
